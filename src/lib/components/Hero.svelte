@@ -3,7 +3,7 @@
 	const name = 'Jade Jabagat Angco';
 	const role = 'Front-End Developer';
 	const location = 'Bislig City, Surigao Del Sur,  Philippines 🇵🇭';
-	const bio = `I'm a frontend-focused developer who loves building fast, responsive, and visually polished web interfaces. I specialize in SvelteKit and Vue.js, and I care deeply about the details — smooth interactions, clean layouts, and code that's easy to maintain. When I'm not pushing pixels, I'm exploring new UI patterns or contributing to open-source projects.`;
+	const bio = `I'm a frontend-focused developer who loves building fast, responsive, and visually polished web interfaces. I specialize in SvelteKit and Vue.js, and I care deeply about the details — smooth interactions, clean layouts, and code that's easy to maintain. When I'm not pushing pixels, I'm exploring new UI patterns.`;
 	const resumeLink = '#'; // Replace with actual resume link
 </script>
 
@@ -55,7 +55,7 @@
 			Junior Computer Information Technician & Frontend Developer with a BS in Computer Science from
 			<span class="text-base-content/70 font-medium"
 				>North Eastern Mindanao State University - Tagbina Campus</span
-			>. Skilled in PHP development, UI/UX design, and IT support, with hands-on experience in both
+			>. Skilled in UI/UX design and IT support, with hands-on experience in both
 			software and hardware troubleshooting. Certified in
 			<span class="text-base-content/70 font-medium">Computer System Servicing NCII</span>.
 		</p>
