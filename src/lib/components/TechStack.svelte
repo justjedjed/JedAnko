@@ -66,13 +66,13 @@
 	};
 </script>
 
-<div class="min-h-screen flex items-center px-6 py-20 bg-base-200">
+<div class="min-h-screen flex items-center px-6 py-20 bg-[#faf7f2]">
 	<div class="max-w-3xl w-full mx-auto">
 		<!-- Header -->
-		<div class="mb-12">
-			<p class="text-xs text-primary font-bold uppercase tracking-widest mb-1">What I work with</p>
-			<h2 class="text-4xl font-black text-base-content">Tech Stack</h2>
-			<p class="text-base-content/50 mt-2 text-sm max-w-md">
+		<div class="mb-16">
+			<p class="text-xs text-[#c65d4b] font-semibold uppercase tracking-widest mb-2">What I work with</p>
+			<h2 class="text-5xl lg:text-6xl font-bold text-[#1a1410]" style="font-family: 'Playfair Display', serif;">Tech Stack</h2>
+			<p class="text-[#6b6560] mt-4 text-base max-w-md leading-relaxed">
 				A curated set of tools and technologies I use to build modern, scalable web applications.
 			</p>
 		</div>
@@ -81,32 +81,30 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			{#each categories as cat}
 				<div
-					class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow"
+					class="rounded-2xl bg-white border border-[#e8e0d8] p-6 shadow-sm hover:shadow-md transition-all duration-200"
 				>
-					<div class="card-body p-5">
-						<div class="flex items-center gap-2 mb-4">
-							<div class="badge {cat.color} badge-sm font-semibold">{cat.label}</div>
-						</div>
-						<div class="flex flex-col gap-3">
-							{#each cat.techs as tech}
-								<div>
-									<div class="flex justify-between items-center mb-1">
-										<span class="text-sm font-medium text-base-content flex items-center gap-1.5">
-											<span>{tech.icon}</span>
-											{tech.name}
-										</span>
-										<span class="text-xs text-base-content/40">{tech.level}</span>
-									</div>
-									<div class="w-full bg-base-300 rounded-full h-1.5">
-										<div
-											class="h-1.5 rounded-full bg-primary {levelWidth[
-												tech.level
-											]} transition-all duration-700"
-										></div>
-									</div>
+					<div class="flex items-center gap-3 mb-6">
+						<span class="px-3 py-1 rounded-full text-xs font-semibold text-white bg-[#c65d4b]">{cat.label}</span>
+					</div>
+					<div class="flex flex-col gap-4">
+						{#each cat.techs as tech}
+							<div>
+								<div class="flex justify-between items-center mb-2">
+									<span class="text-sm font-medium text-[#1a1410] flex items-center gap-2">
+										<span class="text-base">{tech.icon}</span>
+										{tech.name}
+									</span>
+									<span class="text-xs text-[#8b7355] font-medium">{tech.level}</span>
 								</div>
-							{/each}
-						</div>
+								<div class="w-full bg-[#e8e0d8] rounded-full h-2">
+									<div
+										class="h-2 rounded-full bg-gradient-to-r from-[#c65d4b] to-[#d4a574] {levelWidth[
+											tech.level
+										]} transition-all duration-700"
+									></div>
+								</div>
+							</div>
+						{/each}
 					</div>
 				</div>
 			{/each}

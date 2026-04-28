@@ -34,49 +34,49 @@
 	];
 </script>
 
-<div class="min-h-screen flex items-center px-6 py-20 bg-base-200">
+<div class="min-h-screen flex items-center px-6 py-20 bg-[#faf7f2]">
 	<div class="max-w-3xl w-full mx-auto">
 		<!-- Header -->
-		<div class="mb-12">
-			<p class="text-xs text-primary font-bold uppercase tracking-widest mb-1">Live on the web</p>
-			<h2 class="text-4xl font-black text-base-content">Hosted Websites</h2>
-			<p class="text-base-content/50 mt-2 text-sm max-w-md">
+		<div class="mb-16">
+			<p class="text-xs text-[#c65d4b] font-semibold uppercase tracking-widest mb-2">Live on the web</p>
+			<h2 class="text-5xl lg:text-6xl font-bold text-[#1a1410]" style="font-family: 'Playfair Display', serif;">Hosted Websites</h2>
+			<p class="text-[#6b6560] mt-4 text-base max-w-md leading-relaxed">
 				Real-world websites I helped design, develop, and deploy for clients and organizations.
 			</p>
 		</div>
 
 		<!-- Sites list -->
-		<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-5">
 			{#each sites as site}
 				<div
-					class="card card-side bg-base-100 border border-base-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+					class="group rounded-2xl bg-white border border-[#e8e0d8] overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col sm:flex-row"
 				>
 					<!-- Thumbnail -->
-					<figure class="w-36 shrink-0 hidden sm:block">
-						<img src={site.thumbnail} alt={site.name} class="h-full w-full object-cover" />
-					</figure>
+					<div class="w-full sm:w-40 sm:shrink-0 h-40 sm:h-auto overflow-hidden bg-[#f0eae2]">
+						<img src={site.thumbnail} alt={site.name} class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+					</div>
 
-					<div class="card-body p-4 gap-2">
+					<div class="p-6 gap-3 flex flex-col flex-1">
 						<div class="flex items-start justify-between gap-2 flex-wrap">
-							<h3 class="font-bold text-base text-base-content">{site.name}</h3>
-							<span class="badge badge-primary badge-outline badge-sm shrink-0">{site.role}</span>
+							<h3 class="font-semibold text-lg text-[#1a1410]" style="font-family: 'Playfair Display', serif;">{site.name}</h3>
+							<span class="px-2 py-1 rounded text-xs font-semibold text-white bg-[#c65d4b] shrink-0">{site.role}</span>
 						</div>
-						<p class="text-sm text-base-content/60 leading-relaxed">{site.description}</p>
-						<div class="flex flex-wrap gap-1.5">
+						<p class="text-sm text-[#6b6560] leading-relaxed">{site.description}</p>
+						<div class="flex flex-wrap gap-2 mt-1">
 							{#each site.tech as t}
-								<span class="badge badge-ghost badge-xs">{t}</span>
+								<span class="text-xs px-2 py-1 rounded-full bg-[#faf7f2] border border-[#e8e0d8] text-[#8b7355]">{t}</span>
 							{/each}
 						</div>
-						<div class="mt-1">
+						<div class="mt-2">
 							<a
 								href={site.url}
 								target="_blank"
 								rel="noopener noreferrer"
-								class="btn btn-xs btn-primary gap-1"
+								class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#c65d4b] text-white font-medium text-sm hover:bg-[#b54a3a] transition-colors"
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
-									class="h-3.5 w-3.5"
+									class="h-4 w-4"
 									fill="none"
 									viewBox="0 0 24 24"
 									stroke="currentColor"
