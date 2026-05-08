@@ -6,15 +6,23 @@
 	import mentalhealth from '$lib/assets/projects/MentalHealth.jpeg';
 	import travelhive from '$lib/assets/projects/TravelHive.png';
 	import edushare from '$lib/assets/projects/edushare.jpeg';
+	import parinig from '$lib/assets/projects/parinig.jpeg';
 
-	const projects = [
+	type Project = {
+		title: string;
+		description: string;
+		tags: string[];
+		status: 'Completed' | 'Under Development';
+		image: string;
+		demo?: string;
+	};
+	const projects: Project[] = [
 		{
 			title: 'Elnido Hideaway',
 			description:
 				'A website showcasing the stunning tourist spots of El Nido, featuring local attractions and destination highlights. Fully developed but intended for local use.',
 			tags: ['Nuxt', 'TailwindCSS'],
 			status: 'Completed',
-			statusColor: 'badge-success',
 			image: elnido
 		},
 		{
@@ -23,7 +31,6 @@
 				'A recipe-sharing website where users can publish and share cooking creations. Completed but locally used only.',
 			tags: ['CodeIgniter', 'TailwindCSS'],
 			status: 'Completed',
-			statusColor: 'badge-success',
 			image: nutrigourmet
 		},
 		{
@@ -32,7 +39,6 @@
 				'An informational website for EventEase that presents upcoming events, schedules, and venue details. Completed but locally used only.',
 			tags: ['CodeIgniter', 'TailwindCSS'],
 			status: 'Completed',
-			statusColor: 'badge-success',
 			image: eventease
 		},
 		{
@@ -41,16 +47,14 @@
 				'My undergraduate thesis project using Gradient Boosting to predict employee attrition based on structured datasets and organizational features.',
 			tags: ['Chakra', 'TailwindCSS'],
 			status: 'Completed',
-			statusColor: 'badge-success',
 			image: pea
 		},
 		{
 			title: 'Student Mental Health',
 			description:
-				'A mental health monitoring web app for students built with Flet and MySQL. It predicts stress and risk levels using a Random Forest algorithm, features session-based login, editable user profiles, and admin analytics dashboards.',
-			tags: ['Flutter', 'TailwindCSS'],
+				'A mental health monitoring web app for students built with Flet and MySQL. Predicts stress and risk levels using Random Forest, with session-based login, editable profiles, and admin analytics.',
+			tags: ['Flutter', 'MySQL'],
 			status: 'Completed',
-			statusColor: 'badge-success',
 			image: mentalhealth
 		},
 		{
@@ -60,19 +64,40 @@
 			tags: ['Nuxt', 'TailwindCSS'],
 			demo: 'https://travelhive-tour.onrender.com/',
 			status: 'Completed',
-			statusColor: 'badge-success',
 			image: travelhive
 		},
 		{
 			title: 'Edushare',
-			description: 'Under development. A platform for sharing educational resources.',
+			description:
+				'A platform for sharing educational resources — currently under active development.',
 			tags: ['Nuxt', 'TailwindCSS', 'Firebase'],
 			demo: 'https://edushare-free.onrender.com/',
 			status: 'Under Development',
-			statusColor: 'badge-info',
 			image: edushare
+		},
+		{
+			title: 'Parinig',
+			description:
+				'A quiet space to say what’s on your mind—no names, no pressure. Just real thoughts, shared freely.',
+			tags: ['Svelte', 'TailwindCSS', 'Firebase', 'DaisyUI'],
+			demo: 'https://parinig.vercel.app/',
+			status: 'Under Development',
+			image: parinig
 		}
 	];
+
+	// Status badge: fully explicit classes so no DaisyUI color bleed
+	const statusStyles: Record<Project['status'], string> = {
+		Completed:
+			'bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700/50',
+		'Under Development':
+			'bg-sky-100 text-sky-700 border border-sky-200 dark:bg-sky-900/40 dark:text-sky-300 dark:border-sky-700/50'
+	};
+
+	const statusDot: Record<Project['status'], string> = {
+		Completed: 'bg-emerald-500',
+		'Under Development': 'bg-sky-400'
+	};
 </script>
 
 <div class="min-h-screen flex items-center px-6 py-20">
@@ -90,25 +115,36 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 			{#each projects as project}
 				<div
-					class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 group"
+					class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 group overflow-hidden"
 				>
+					<!-- Image -->
 					{#if project.image}
-						<figure>
-							<img src={project.image} alt={project.title} class="w-full h-40 object-cover" />
+						<figure class="overflow-hidden">
+							<img
+								src={project.image}
+								alt={project.title}
+								class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+							/>
 						</figure>
 					{/if}
 
 					<div class="card-body p-5 flex flex-col gap-3">
 						<!-- Title + Status -->
-						<div class="flex items-start justify-between gap-2">
+						<div class="flex items-start justify-between gap-2 flex-wrap">
 							<h3
 								class="font-bold text-base-content text-base leading-snug group-hover:text-primary transition-colors"
 							>
 								{project.title}
 							</h3>
-							<span class="badge {project.statusColor} badge-sm shrink-0 text-white"
-								>{project.status}</span
+							<!-- Fully explicit badge — readable in light AND dark -->
+							<span
+								class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0 {statusStyles[
+									project.status
+								]}"
 							>
+								<span class="w-1.5 h-1.5 rounded-full shrink-0 {statusDot[project.status]}"></span>
+								{project.status}
+							</span>
 						</div>
 
 						<!-- Description -->
@@ -117,41 +153,24 @@
 						</p>
 
 						<!-- Tags -->
-						<div class="flex flex-wrap gap-1.5 mt-1">
+						<div class="flex flex-wrap gap-1.5">
 							{#each project.tags as tag}
-								<span class="badge badge-outline badge-xs text-base-content/50">{tag}</span>
+								<span
+									class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-base-200 text-base-content/60 border border-base-300"
+								>
+									{tag}
+								</span>
 							{/each}
 						</div>
 
 						<!-- Links -->
-						<div class="flex gap-2 mt-2">
-							<!-- {#if project.github}
-								<a
-									href={project.github}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="btn btn-ghost btn-xs gap-1"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="h-3.5 w-3.5"
-										fill="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"
-										/>
-									</svg>
-									Code
-								</a>
-							{/if} -->
-
-							{#if project.demo}
+						{#if project.demo}
+							<div class="mt-1">
 								<a
 									href={project.demo}
 									target="_blank"
 									rel="noopener noreferrer"
-									class="btn btn-ghost btn-xs gap-1 text-primary"
+									class="btn btn-xs btn-primary gap-1"
 								>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -169,8 +188,8 @@
 									</svg>
 									Live Demo
 								</a>
-							{/if}
-						</div>
+							</div>
+						{/if}
 					</div>
 				</div>
 			{/each}

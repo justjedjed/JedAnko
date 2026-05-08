@@ -1,15 +1,14 @@
 <script lang="ts">
-	// Edit this list to match your actual stack
 	type Level = 'Expert' | 'Advanced' | 'Intermediate' | 'Beginner';
 
 	const categories: {
 		label: string;
-		color: string;
+		icon: string;
 		techs: { name: string; icon: string; level: Level }[];
 	}[] = [
 		{
 			label: 'Frontend',
-			color: 'badge-primary',
+			icon: '🖥️',
 			techs: [
 				{ name: 'SvelteKit', icon: '🧡', level: 'Intermediate' },
 				{ name: 'Nuxt', icon: '💚', level: 'Intermediate' },
@@ -20,10 +19,8 @@
 		},
 		{
 			label: 'Backend',
-			color: 'badge-secondary',
+			icon: '⚙️',
 			techs: [
-				// { name: 'Node.js', icon: '🟩', level: 'Advanced' },
-				// { name: 'Express', icon: '🚂', level: 'Advanced' },
 				{ name: 'CodeIgniter', icon: '🔴', level: 'Intermediate' },
 				{ name: 'Hono', icon: '⚡', level: 'Beginner' },
 				{ name: 'Firebase', icon: '🔥', level: 'Intermediate' }
@@ -31,17 +28,15 @@
 		},
 		{
 			label: 'Database',
-			color: 'badge-accent',
+			icon: '🗄️',
 			techs: [
-				// { name: 'PostgreSQL', icon: '🐘', level: 'Advanced' },
 				{ name: 'MySQL', icon: '🐬', level: 'Intermediate' },
 				{ name: 'MongoDB', icon: '🍃', level: 'Intermediate' }
-				// { name: 'Redis', icon: '❤️', level: 'Beginner' }
 			]
 		},
 		{
 			label: 'Tools & DevOps',
-			color: 'badge-neutral',
+			icon: '🛠️',
 			techs: [
 				{ name: 'Git & GitHub', icon: '🐙', level: 'Intermediate' },
 				{ name: 'Docker', icon: '🐳', level: 'Beginner' },
@@ -52,17 +47,47 @@
 		}
 	];
 
-	const levelColor: Record<Level, string> = {
-		Expert: 'progress-primary',
-		Advanced: 'progress-secondary',
-		Intermediate: 'progress-accent',
-		Beginner: 'progress-neutral'
+	// Fully explicit — no DaisyUI badge color bleed
+	const categoryStyle: Record<string, string> = {
+		Frontend:
+			'bg-violet-100 text-violet-700 border border-violet-200 dark:bg-violet-900/40 dark:text-violet-300 dark:border-violet-700/50',
+		Backend:
+			'bg-orange-100 text-orange-700 border border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-700/50',
+		Database:
+			'bg-teal-100 text-teal-700 border border-teal-200 dark:bg-teal-900/40 dark:text-teal-300 dark:border-teal-700/50',
+		'Tools & DevOps':
+			'bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-600/50'
 	};
-	const levelWidth: Record<Level, string> = {
-		Expert: 'w-full',
-		Advanced: 'w-4/5',
-		Intermediate: 'w-3/5',
-		Beginner: 'w-2/5'
+
+	const categoryAccent: Record<string, string> = {
+		Frontend: 'bg-violet-500',
+		Backend: 'bg-orange-500',
+		Database: 'bg-teal-500',
+		'Tools & DevOps': 'bg-slate-500'
+	};
+
+	// Level: dots instead of a bar — no color bleed risk
+	const levelConfig: Record<Level, { dots: number; label: string; color: string }> = {
+		Expert: {
+			dots: 4,
+			label: 'Expert',
+			color: 'bg-emerald-500 dark:bg-emerald-400'
+		},
+		Advanced: {
+			dots: 3,
+			label: 'Advanced',
+			color: 'bg-sky-500 dark:bg-sky-400'
+		},
+		Intermediate: {
+			dots: 2,
+			label: 'Intermediate',
+			color: 'bg-amber-500 dark:bg-amber-400'
+		},
+		Beginner: {
+			dots: 1,
+			label: 'Beginner',
+			color: 'bg-rose-400 dark:bg-rose-400'
+		}
 	};
 </script>
 
@@ -81,33 +106,68 @@
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			{#each categories as cat}
 				<div
-					class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow"
+					class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
 				>
 					<div class="card-body p-5">
-						<div class="flex items-center gap-2 mb-4">
-							<div class="badge {cat.color} badge-sm font-semibold">{cat.label}</div>
+						<!-- Category header -->
+						<div class="flex items-center gap-2 mb-5">
+							<span
+								class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full {categoryStyle[
+									cat.label
+								]}"
+							>
+								<span>{cat.icon}</span>
+								{cat.label}
+							</span>
 						</div>
-						<div class="flex flex-col gap-3">
+
+						<!-- Tech rows -->
+						<div class="flex flex-col gap-3.5">
 							{#each cat.techs as tech}
-								<div>
-									<div class="flex justify-between items-center mb-1">
-										<span class="text-sm font-medium text-base-content flex items-center gap-1.5">
-											<span>{tech.icon}</span>
-											{tech.name}
+								{@const cfg = levelConfig[tech.level]}
+								<div class="flex items-center justify-between gap-3">
+									<!-- Name -->
+									<span
+										class="flex items-center gap-2 text-sm font-medium text-base-content min-w-0"
+									>
+										<span class="text-base leading-none">{tech.icon}</span>
+										<span class="truncate">{tech.name}</span>
+									</span>
+
+									<!-- Level: dot indicators + label -->
+									<div class="flex items-center gap-2 shrink-0">
+										<span class="text-[11px] text-base-content/40 font-medium hidden sm:block">
+											{cfg.label}
 										</span>
-										<span class="text-xs text-base-content/40">{tech.level}</span>
-									</div>
-									<div class="w-full bg-base-300 rounded-full h-1.5">
-										<div
-											class="h-1.5 rounded-full bg-primary {levelWidth[
-												tech.level
-											]} transition-all duration-700"
-										></div>
+										<div class="flex gap-0.5">
+											{#each { length: 4 } as _, i}
+												<span
+													class="w-2 h-2 rounded-full transition-colors {i < cfg.dots
+														? cfg.color
+														: 'bg-base-300'}"
+												></span>
+											{/each}
+										</div>
 									</div>
 								</div>
 							{/each}
 						</div>
 					</div>
+				</div>
+			{/each}
+		</div>
+
+		<!-- Legend -->
+		<div class="flex flex-wrap gap-4 mt-8 justify-center">
+			{#each Object.entries(levelConfig) as [label, cfg]}
+				<div class="flex items-center gap-1.5">
+					<div class="flex gap-0.5">
+						{#each { length: 4 } as _, i}
+							<span class="w-1.5 h-1.5 rounded-full {i < cfg.dots ? cfg.color : 'bg-base-300'}"
+							></span>
+						{/each}
+					</div>
+					<span class="text-xs text-base-content/50">{label}</span>
 				</div>
 			{/each}
 		</div>

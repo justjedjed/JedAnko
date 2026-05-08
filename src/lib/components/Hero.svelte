@@ -68,7 +68,7 @@
         Download Resume
       </a> -->
 			<a
-				href="https://github.com/JedjedAnko"
+				href="https://github.com/Justjedjed"
 				target="_blank"
 				rel="noopener noreferrer"
 				class="btn btn-outline btn-sm gap-2"
