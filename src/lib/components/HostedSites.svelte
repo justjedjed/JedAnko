@@ -2,6 +2,7 @@
 	import mmhotel from '$lib/assets/projects/mmhotel.png';
 	import mmbuilding from '$lib/assets/projects/mmbuilding.png';
 	import michaelarestobar from '$lib/assets/projects/restobar.png';
+	import mdebtcorporation from '$lib/assets/projects/mdebt.png';
 
 	const sites = [
 		{
@@ -41,6 +42,7 @@
 				' M Debt corporation is one of the few offices in Caraga Region established on a Debt Corporation and management background & who have combined legal & professional skills matched with experience to service your requirements effectively.',
 			role: 'DevOps & Hosting',
 			tech: ['Pure HTML/CSS'],
+			thumbnail: mdebtcorporation,
 			maintenance: false
 		}
 	];
