@@ -7,6 +7,7 @@
 	import travelhive from '$lib/assets/projects/TravelHive.png';
 	import edushare from '$lib/assets/projects/edushare.jpeg';
 	import parinig from '$lib/assets/projects/parinig.jpeg';
+	import reziofy from '$lib/assets/projects/reziofy.png';
 
 	type Project = {
 		title: string;
@@ -66,15 +67,15 @@
 			status: 'Completed',
 			image: travelhive
 		},
-		{
-			title: 'Edushare',
-			description:
-				'A platform for sharing educational resources — currently under active development.',
-			tags: ['Nuxt', 'TailwindCSS', 'Firebase'],
-			demo: 'https://edushare-free.onrender.com/',
-			status: 'Under Development',
-			image: edushare
-		},
+		// {
+		// 	title: 'Edushare',
+		// 	description:
+		// 		'A platform for sharing educational resources — currently under active development.',
+		// 	tags: ['Nuxt', 'TailwindCSS', 'Firebase'],
+		// 	demo: 'https://edushare-free.onrender.com/',
+		// 	status: 'Under Development',
+		// 	image: edushare
+		// },
 		{
 			title: 'Parinig',
 			description:
@@ -83,6 +84,14 @@
 			demo: 'https://parinig.vercel.app/',
 			status: 'Under Development',
 			image: parinig
+		},
+		{
+			title: 'Reziofy',
+			description: 'Reziofy is a website that helps you create a resume.',
+			tags: ['Svelte', 'TailwindCSS', 'Firebase', 'DaisyUI'],
+			demo: 'https://reziofy.web.app/',
+			status: 'Under Development',
+			image: reziofy
 		}
 	];
 
