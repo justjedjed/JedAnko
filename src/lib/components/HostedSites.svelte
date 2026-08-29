@@ -7,7 +7,7 @@
 	const sites = [
 		{
 			name: 'MM Hotel Tandag',
-			url: 'https://www.mmhotel-tandag.com/',
+			url: 'https://mmhoteltandag.mmgroupcompanies.com/',
 			description:
 				"A full hotel website for M'M Hotel in Tandag City featuring room showcases, amenities, a coffee lounge and bar, restobar, function hall and banquet rentals, guest reviews, and a photo gallery.",
 			role: 'DevOps & Hosting',
@@ -17,7 +17,7 @@
 		},
 		{
 			name: 'MM Building',
-			url: 'https://mmbuilding.onrender.com/',
+			url: 'https://mmcommercialbuilding.mmgroupcompanies.com/',
 			description:
 				'A commercial and residential property website for MM Building in Agusan Del Sur. Highlights key facilities including a function hall, swimming pool, elevator, rooms, lights and sound system, and a projector setup for events.',
 			role: 'DevOps & Hosting',
@@ -27,7 +27,7 @@
 		},
 		{
 			name: "Michaela's Arabic Restobar",
-			url: 'https://michaelasarabicrestobar.com/',
+			url: 'https://michaelasarabicrestobar.mmgroupcompanies.com/',
 			description:
 				"A restaurant website for Michaela's Arabic Restobar in San Francisco, Agusan Del Sur — blending Middle Eastern and Asian flavors. Features a full menu showcase, about section, special dish highlight, and contact details.",
 			role: 'DevOps & Hosting',
@@ -37,7 +37,7 @@
 		},
 		{
 			name: 'M Debt corporation',
-			url: 'https://mdebt-corporation.com/',
+			url: 'https://mdebtcorporation.mmgroupcompanies.com/',
 			description:
 				' M Debt corporation is one of the few offices in Caraga Region established on a Debt Corporation and management background & who have combined legal & professional skills matched with experience to service your requirements effectively.',
 			role: 'DevOps & Hosting',
