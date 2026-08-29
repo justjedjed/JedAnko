@@ -13,7 +13,7 @@
 			role: 'DevOps & Hosting',
 			tech: ['Pure HTML/CSS'],
 			thumbnail: mmhotel,
-			maintenance: false
+			maintenance: true
 		},
 		{
 			name: 'MM Building',
@@ -23,7 +23,7 @@
 			role: 'DevOps & Hosting',
 			tech: ['Pure HTML/CSS'],
 			thumbnail: mmbuilding,
-			maintenance: false
+			maintenance: true
 		},
 		{
 			name: "Michaela's Arabic Restobar",
@@ -33,7 +33,7 @@
 			role: 'DevOps & Hosting',
 			tech: ['Pure HTML/CSS'],
 			thumbnail: michaelarestobar,
-			maintenance: false
+			maintenance: true
 		},
 		{
 			name: 'M Debt corporation',
@@ -43,7 +43,7 @@
 			role: 'DevOps & Hosting',
 			tech: ['Pure HTML/CSS'],
 			thumbnail: mdebtcorporation,
-			maintenance: false
+			maintenance: true
 		}
 	];
 </script>
