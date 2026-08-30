@@ -3,7 +3,7 @@
 	type Skill = { name: string; level: string; pct: number };
 	type SkillGroup = { title: string; icon: string; items: Skill[] };
 	type Project = { title: string; kind: string; status: 'Completed' | 'In Development'; desc: string; tags: string[]; gradient: string; accent: string; image: string };
-	type Hosted = { title: string; role: string; desc: string; tags: string[]; big?: boolean; gradient: string; image: string; status: 'Suspended' };
+	type Hosted = { title: string; role: string; desc: string; tags: string[]; big?: boolean; gradient: string; image: string; status: 'Suspended' | 'Live'; url: string };
 
 	const stats = [
 		{ value: '7', label: 'Projects Built', sub: 'Shipped', icon: '◩' },
@@ -36,10 +36,11 @@
 	let activeFilter = $state('All');
 	const filteredProjects = $derived(activeFilter === 'All' ? projects : projects.filter(p => p.status === activeFilter));
 	const hosted: Hosted[] = [
-		{ title: 'MM Hotel Tandag', role: 'DevOps & Hosting', desc: 'Full hotel experience — rooms, coffee lounge, restobar & banquet gallery.', tags: ['HTML/CSS'], big: false, gradient: 'linear-gradient(180deg,#2a3a3a 0%,#0c1414 100%)', image: '/mmhotel.png', status: 'Suspended' },
-		{ title: 'MM Building', role: 'DevOps & Hosting', desc: 'Commercial + residential showcase — pool, elevator & event lighting.', tags: ['HTML/CSS'], gradient: '', image: '/mmbuilding.png', status: 'Suspended' },
-		{ title: "Michaela's Arabic Restobar", role: 'DevOps & Hosting', desc: 'Middle-Eastern & Asian flavors — menu, story & contact crafted warmly.', tags: ['HTML/CSS'], gradient: '', image: '/restobar.png', status: 'Suspended' },
-		{ title: 'M Debt Corporation', role: 'DevOps & Hosting', desc: 'Corporate site for Caraga’s debt-management specialists — trust, built digitally.', tags: ['HTML/CSS'], gradient: '', image: '/mdebt.png', status: 'Suspended' }
+		{ title: 'MM Group of Comapnies', role: 'DevOps & Hosting', desc: 'The main Domain of all websites.', tags: ['HTML/CSS'], big: true, gradient: 'linear-gradient(180deg,#2a3a3a 0%,#0c1414 100%)', image: '/mmcompanies.jpeg', status: 'Live', url: 'https://mmgroupcompanies.com/' },
+		{ title: 'MM Hotel Tandag', role: 'DevOps & Hosting', desc: 'Full hotel experience — rooms, coffee lounge, restobar & banquet gallery.', tags: ['HTML/CSS'], gradient: 'linear-gradient(180deg,#2a3a3a 0%,#0c1414 100%)', image: '/mmhotel.png', status: 'Live', url: 'https://mmhoteltandag.mmgroupcompanies.com/' },
+		{ title: 'MM Building', role: 'DevOps & Hosting', desc: 'Commercial + residential showcase — pool, elevator & event lighting.', tags: ['HTML/CSS'], gradient: '', image: '/mmbuilding.png', status: 'Live', url: 'https://mmcommercialbuilding.mmgroupcompanies.com/' },
+		{ title: "Michaela's Arabic Restobar", role: 'DevOps & Hosting', desc: 'Middle-Eastern & Asian flavors — menu, story & contact crafted warmly.', tags: ['HTML/CSS'], gradient: '', image: '/restobar.png', status: 'Live', url: 'https://michaelasarabicrestobar.mmgroupcompanies.com/' },
+		{ title: "'M Debt Corporation", role: 'DevOps & Hosting', desc: 'Corporate site for Caraga’s debt-management specialists — trust, built digitally.', tags: ['HTML/CSS'], gradient: '', image: '/mdebt.png', status: 'Live', url: 'https://mdebtcorporation.mmgroupcompanies.com/' },
 	];
 	const navLinks = ['About','Skills','Projects','Live Sites','Contact'];
 	let name=$state(''), email=$state(''), subject=$state(''), message=$state(''), sent=$state(false);
@@ -206,7 +207,7 @@
 				<article class="hosted-card" class:suspended={h.status==='Suspended'}>
 					<div class="hosted-media"><img class="hosted-img" src={h.image} alt={h.title} loading="lazy" /><div class="hosted-shine"></div><span class="suspend-dot">◐ SUSPENDED — REVAMP</span></div>
 					<div class="hosted-body">
-						<div class="hosted-head"><h4>{h.title}</h4><a href="#" class="link-icon" aria-label="Open">↗</a></div>
+						<div class="hosted-head"><h4>{h.title}</h4><a href={h.url} target="_blank" rel="noopener noreferrer" class="link-icon" aria-label="Open">↗</a></div>
 						<span class="hosted-role">{h.role.toUpperCase()}</span>
 						<p>{h.desc}</p>
 						<div class="tag-row">{#each h.tags as t}<span class="tag">{t}</span>{/each}</div>
