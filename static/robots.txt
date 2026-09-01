@@ -1,3 +1,10 @@
-# allow crawling everything by default
+# Jade Angco Portfolio - Robots.txt
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /.git/
+
+# Sitemaps
+Sitemap: https://jadeangco-portfolio.onrender.com/sitemap.xml
+
+# Crawl-delay (optional, helps with server load)
+Crawl-delay: 1

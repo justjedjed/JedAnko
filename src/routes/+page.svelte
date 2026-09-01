@@ -268,10 +268,58 @@
   }
 </script>
 
-<svelte:head
-  ><title>Jade Angco — Front-End Developer • SvelteKit & Vue</title
-  ></svelte:head
->
+<svelte:head>
+	<title>Jade Angco — Front-End Developer • SvelteKit & Vue</title>
+	<meta name="description" content="Front-End Developer from Bislig City, Philippines. Building fast, responsive & visually polished web interfaces with SvelteKit, Vue.js, TailwindCSS. Available for freelance and remote work worldwide." />
+	{@html `
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "Person",
+			"name": "Jade Jabagat Angco",
+			"url": "https://jadeangco-portfolio.onrender.com",
+			"image": "https://jadeangco-portfolio.onrender.com/Jade.jpg",
+			"jobTitle": "Front-End Developer",
+			"worksFor": {
+				"@type": "Organization",
+				"name": "Freelance"
+			},
+			"description": "Front-End Developer specializing in SvelteKit, Vue.js, and modern web technologies. Building fast, responsive interfaces with clean code.",
+			"address": {
+				"@type": "PostalAddress",
+				"addressLocality": "Bislig City",
+				"addressRegion": "Surigao del Sur",
+				"addressCountry": "Philippines"
+			},
+			"email": "jedboyjabagat@gmail.com",
+			"alumniOf": {
+				"@type": "EducationalOrganization",
+				"name": "North Eastern Mindanao State University",
+				"location": "Tagbina"
+			},
+			"knowsAbout": [
+				"SvelteKit",
+				"Vue.js",
+				"Nuxt",
+				"TailwindCSS",
+				"DaisyUI",
+				"TypeScript",
+				"CodeIgniter",
+				"Firebase",
+				"MySQL",
+				"MongoDB",
+				"Web Development",
+				"Front-End Development",
+				"UI/UX Design"
+			],
+			"sameAs": [
+				"https://github.com/justjedjed",
+				"https://www.facebook.com/just.jeddd"
+			]
+		}
+		</script>
+	`}
+</svelte:head>
 
 <nav class="navbar" class:scrolled>
   <div class="navbar-inner">
