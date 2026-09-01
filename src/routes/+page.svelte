@@ -2,8 +2,8 @@
 	import { onMount } from 'svelte';
 	type Skill = { name: string; level: string; pct: number };
 	type SkillGroup = { title: string; icon: string; items: Skill[] };
-	type Project = { title: string; kind: string; status: 'Completed' | 'In Development'; desc: string; tags: string[]; gradient: string; accent: string; image: string };
-	type Hosted = { title: string; role: string; desc: string; tags: string[]; big?: boolean; gradient: string; image: string; status: 'Suspended' | 'Live'; url: string };
+	type Project = { title: string; kind: string; status: 'Completed' | 'In Development'; desc: string; tags: string[]; gradient: string; accent: string; image: string; url?: string };
+	type Hosted = { title: string; role: string; desc: string; tags: string[]; big?: boolean; gradient: string; image: string; status: 'Suspended' | 'Live'; url: string; group?: string };
 
 	const stats = [
 		{ value: '7', label: 'Projects Built', sub: 'Shipped', icon: '◩' },
@@ -29,14 +29,14 @@
 		{ title: 'NutriGourmet', kind: 'Food Blog', status: 'Completed', desc: 'Recipe publishing with rich cards, categories & editorial layout that tastes as good as it looks.', tags: ['CodeIgniter','TailwindCSS'], gradient: 'linear-gradient(135deg,#ffecd2 0%,#fcb69f 40%,#8b3a2a 100%)', accent:'#ffa42b', image: '/Nutrigourment1.jpeg' },
 		{ title: 'Student Wellness', kind: 'Wellness Web App', status: 'Completed', desc: 'Mental-health monitoring — Random Forest predictions, editable profiles & admin analytics.', tags: ['Flutter','MySQL'], gradient: 'linear-gradient(135deg,#e0d6ff 0%,#8a6cf0 45%,#1a1040 100%)', accent:'#8a6cf0', image: '/MentalHealth.jpeg' },
 		{ title: 'TravelHive', kind: 'Tourism Mockup', status: 'Completed', desc: 'Surigao del Sur explorations — itineraries, coastal cards & local highlights.', tags: ['Nuxt','TailwindCSS'], gradient: 'linear-gradient(135deg,#b8e6fe 0%,#3a9ad9 45%,#0a2a4a 100%)', accent:'#539df5', image: '/TravelHive.png' },
-		{ title: 'Parinig', kind: 'Anonymous Sharing', status: 'In Development', desc: 'Whisper freely — no names, no pressure. Real thoughts, real-time, reimagined.', tags: ['Svelte','Firebase','DaisyUI'], gradient: '', accent:'#1ed760', image: '/parinig.jpeg' },
-		{ title: 'Reziofy', kind: 'Resume Builder', status: 'In Development', desc: 'Polished resumes in minutes — smart templates, live preview & instant PDF.', tags: ['Svelte','Firebase','DaisyUI'], gradient: '', accent:'#1ed760', image: '/reziofy.png' }
+		{ title: 'Parinig', kind: 'Anonymous Sharing', status: 'In Development', desc: 'Whisper freely — no names, no pressure. Real thoughts, real-time, reimagined.', tags: ['Svelte','Firebase','DaisyUI'], gradient: '', accent:'#1ed760', image: '/parinig.jpeg', url: 'https://parinig.vercel.app/' },
+		{ title: 'Reziofy', kind: 'Resume Builder', status: 'In Development', desc: 'Polished resumes in minutes — smart templates, live preview & instant PDF.', tags: ['Svelte','Firebase','DaisyUI'], gradient: '', accent:'#1ed760', image: '/reziofy.png', url: 'https://reziofy.web.app/' }
 	];
 	const filters = ['All','Completed','In Development'];
 	let activeFilter = $state('All');
 	const filteredProjects = $derived(activeFilter === 'All' ? projects : projects.filter(p => p.status === activeFilter));
 	const hosted: Hosted[] = [
-		{ title: 'MM Group of Comapnies', role: 'DevOps & Hosting', desc: 'The main Domain of all websites.', tags: ['HTML/CSS'], big: true, gradient: 'linear-gradient(180deg,#2a3a3a 0%,#0c1414 100%)', image: '/mmcompanies.jpeg', status: 'Live', url: 'https://mmgroupcompanies.com/' },
+		{ title: 'MM Group of Companies', role: 'DevOps & Hosting', desc: 'The umbrella holding every MM venture — hotel, building, restobar & corporation. A unified digital front for the entire group.', tags: ['HTML/CSS'], big: true, gradient: 'linear-gradient(180deg,#2a3a3a 0%,#0c1414 100%)', image: '/mmcompanies.jpeg', status: 'Live', url: 'https://mmgroupcompanies.com/' },
 		{ title: 'MM Hotel Tandag', role: 'DevOps & Hosting', desc: 'Full hotel experience — rooms, coffee lounge, restobar & banquet gallery.', tags: ['HTML/CSS'], gradient: 'linear-gradient(180deg,#2a3a3a 0%,#0c1414 100%)', image: '/mmhotel.png', status: 'Live', url: 'https://mmhoteltandag.mmgroupcompanies.com/' },
 		{ title: 'MM Building', role: 'DevOps & Hosting', desc: 'Commercial + residential showcase — pool, elevator & event lighting.', tags: ['HTML/CSS'], gradient: '', image: '/mmbuilding.png', status: 'Live', url: 'https://mmcommercialbuilding.mmgroupcompanies.com/' },
 		{ title: "Michaela's Arabic Restobar", role: 'DevOps & Hosting', desc: 'Middle-Eastern & Asian flavors — menu, story & contact crafted warmly.', tags: ['HTML/CSS'], gradient: '', image: '/restobar.png', status: 'Live', url: 'https://michaelasarabicrestobar.mmgroupcompanies.com/' },
@@ -181,7 +181,9 @@
 						<div class="browser-bar"><span></span><span></span><span></span><span class="bar-url">{p.kind}</span></div>
 						<div class="project-img-overlay"></div>
 						<span class="status-pill" class:dev={p.status==='In Development'}>{p.status==='Completed' ? '● Completed' : '○ In Development'}</span>
-						<a href="#" class="view-btn" aria-label="View project">↗</a>
+						{#if p.url}
+							<a href={p.url} target="_blank" rel="noopener noreferrer" class="view-btn" aria-label="View project">↗</a>
+						{/if}
 					</div>
 					<div class="project-body">
 						<span class="project-kind">{p.kind.toUpperCase()}</span>
@@ -205,7 +207,7 @@
 		<div class="hosted-grid">
 			{#each hosted as h}
 				<article class="hosted-card" class:suspended={h.status==='Suspended'}>
-					<div class="hosted-media"><img class="hosted-img" src={h.image} alt={h.title} loading="lazy" /><div class="hosted-shine"></div><span class="suspend-dot">◐ SUSPENDED — REVAMP</span></div>
+					<div class="hosted-media"><img class="hosted-img" src={h.image} alt={h.title} loading="lazy" /><div class="hosted-shine"></div>{#if h.status === 'Live'}<span class="live-dot">● LIVE</span>{:else}<span class="suspend-dot">◐ SUSPENDED — REVAMP</span>{/if}</div>
 					<div class="hosted-body">
 						<div class="hosted-head"><h4>{h.title}</h4><a href={h.url} target="_blank" rel="noopener noreferrer" class="link-icon" aria-label="Open">↗</a></div>
 						<span class="hosted-role">{h.role.toUpperCase()}</span>
@@ -475,7 +477,11 @@
 		.skills-grid{ grid-template-columns:repeat(2,1fr); }
 		.projects-grid{ grid-template-columns:repeat(2,1fr); }
 		.hosted-grid{ grid-template-columns:1fr; }
-		.hosted-card.big{ grid-row:auto; }
+		.hosted-card.big{ grid-column: 1 / -1; }
+	.hosted-card.big .hosted-media{ height: 240px; }
+	.hosted-card.big .hosted-body{ padding: 1.4rem 1.5rem; }
+	.hosted-card.big .hosted-body h4{ font-size: 1.15rem; }
+	.hosted-card.big .hosted-body p{ font-size: 0.88rem; }
 		.stats-row{ grid-template-columns:repeat(2,1fr); }
 	}
 	@media (max-width:560px){
