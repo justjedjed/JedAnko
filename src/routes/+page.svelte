@@ -270,7 +270,8 @@
 
 <svelte:head>
 	<title>Jade Angco — Front-End Developer • SvelteKit & Vue</title>
-	<meta name="description" content="Front-End Developer from Bislig City, Philippines. Building fast, responsive & visually polished web interfaces with SvelteKit, Vue.js, TailwindCSS. Available for freelance and remote work worldwide." />
+	<meta name="description" content="Male Front-End Developer specializing in SvelteKit, Vue.js, and Nuxt. Building responsive, visually polished web interfaces with modern technologies." />
+	<meta name="keywords" content="Jade Angco, Front-End Developer, Web Developer, SvelteKit, Vue.js, Nuxt, TailwindCSS, DaisyUI, TypeScript, CodeIgniter, Firebase, Bislig City, Surigao del Sur, Philippines, Freelance Developer, UI/UX Developer, Computer Science, Full Stack Developer" />
 	{@html `
 		<script type="application/ld+json">
 		{
