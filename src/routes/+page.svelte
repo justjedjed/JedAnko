@@ -241,11 +241,49 @@
     email = $state(""),
     subject = $state(""),
     message = $state(""),
-    sent = $state(false);
-  function handleSubmit(e: Event) {
+    sent = $state(false),
+    copied = $state(false);
+  async function handleSubmit(e: Event) {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("subject", subject);
+    formData.append("message", message);
+    formData.append("_subject", `Portfolio contact: ${subject || "New message"}`);
+    formData.append("_captcha", "false");
+
     sent = true;
-    setTimeout(() => (sent = false), 2600);
+    try {
+      await fetch("https://formsubmit.co/jedboyjabagat@gmail.com", {
+        method: "POST",
+        body: formData
+      });
+      name = "";
+      email = "";
+      subject = "";
+      message = "";
+    } catch {
+      // fallback: keep values
+    } finally {
+      setTimeout(() => (sent = false), 2600);
+    }
+  }
+  function copyEmail() {
+    navigator.clipboard.writeText("jedboyjabagat@gmail.com");
+    copied = true;
+    setTimeout(() => (copied = false), 1800);
+  }
+  function trackResume(e: Event) {
+    e.preventDefault();
+    const target = e.currentTarget as HTMLAnchorElement;
+    const formData = new FormData();
+    formData.append("_subject", "Portfolio resume download");
+    formData.append("event", "resume_download");
+    formData.append("url", target.href);
+    formData.append("time", new Date().toISOString());
+    fetch("https://formsubmit.co/jedboyjabagat@gmail.com", { method: "POST", body: formData }).catch(() => {});
+    window.open(target.href, "_blank", "noopener,noreferrer");
   }
   let theme: "dark" | "light" = $state("dark");
   let scrolled = $state(false);
@@ -269,10 +307,16 @@
 </script>
 
 <svelte:head>
-	<title>Jade Angco — Front-End Developer • SvelteKit & Vue</title>
-	<meta name="description" content="Male Front-End Developer specializing in SvelteKit, Vue.js, and Nuxt. Building responsive, visually polished web interfaces with modern technologies." />
-	<meta name="keywords" content="Jade Angco, Front-End Developer, Web Developer, SvelteKit, Vue.js, Nuxt, TailwindCSS, DaisyUI, TypeScript, CodeIgniter, Firebase, Bislig City, Surigao del Sur, Philippines, Freelance Developer, UI/UX Developer, Computer Science, Full Stack Developer" />
-	{@html `
+  <title>Jade Angco — Front-End Developer • SvelteKit & Vue</title>
+  <meta
+    name="description"
+    content="Male Front-End Developer specializing in SvelteKit, Vue.js, and Nuxt. Building responsive, visually polished web interfaces with modern technologies."
+  />
+  <meta
+    name="keywords"
+    content="Jade Angco, Front-End Developer, Web Developer, SvelteKit, Vue.js, Nuxt, TailwindCSS, DaisyUI, TypeScript, CodeIgniter, Firebase, Bislig City, Surigao del Sur, Philippines, Freelance Developer, UI/UX Developer, Computer Science, Full Stack Developer"
+  />
+  {@html `
 		<script type="application/ld+json">
 		{
 			"@context": "https://schema.org",
@@ -346,7 +390,7 @@
           ></span
         >
       </button>
-      <a href="#contact" class="btn btn-green btn-sm">Hire me — available</a>
+      <!-- <a href="#contact" class="btn btn-green btn-sm">Hire me — available</a> -->
     </div>
   </div>
 </nav>
@@ -376,8 +420,11 @@
       <span class="loc-remote">Remote • Worldwide</span>
     </p>
     <div class="hero-cta">
-      <a href="#contact" class="btn btn-green btn-lg"
-        >Get in touch <span class="btn-arrow">→</span></a
+      <a
+        href="https://reziofy.web.app/jadeangco?type=resume"
+        class="btn btn-green btn-lg"
+        onclick={trackResume}
+        >View Resume <span class="btn-arrow">→</span></a
       >
       <a href="#projects" class="btn btn-ghost">View projects <span>↗</span></a>
     </div>
@@ -632,10 +679,10 @@
             Facebook Messenger is fastest.
           </p>
         </div>
-        <a href="mailto:jedboyjabagat@gmail.com" class="info-card link"
+        <button type="button" class="info-card link" onclick={copyEmail}
           ><span class="info-label">✉ Email</span><strong
-            >jedboyjabagat@gmail.com</strong
-          ><span class="info-arrow">→</span></a
+            >{copied ? "Copied!" : "jedboyjabagat@gmail.com"}</strong
+          ><span class="info-arrow">{copied ? "✓" : "→"}</span></button
         >
         <a
           href="https://www.facebook.com/just.jeddd"
@@ -719,7 +766,8 @@
     >
   </div>
 </footer>
-<div class="availability-dock">
+
+<!-- <div class="availability-dock">
   <span class="dock-dot"></span>
   <div class="dock-meta">
     <span>Available for work</span><strong
@@ -727,7 +775,7 @@
     >
   </div>
   <a href="#contact" class="dock-cta">Hire me</a>
-</div>
+</div> -->
 
 <style>
   .navbar {
