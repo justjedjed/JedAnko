@@ -40,7 +40,10 @@
 declare module '$env/static/private' {
 	export const ALLUSERSPROFILE: string;
 	export const APPDATA: string;
+	export const ChocolateyInstall: string;
+	export const ChocolateyLastPathUpdate: string;
 	export const CHROME_CRASHPAD_PIPE_NAME: string;
+	export const CLAUDE_CODE_SSE_PORT: string;
 	export const COLOR: string;
 	export const COLORTERM: string;
 	export const CommonProgramFiles: string;
@@ -49,25 +52,36 @@ declare module '$env/static/private' {
 	export const ComSpec: string;
 	export const DriverData: string;
 	export const EDITOR: string;
+	export const EFC_14028_1262719628: string;
+	export const EFC_14028_1592913036: string;
+	export const EFC_14028_2283032206: string;
+	export const EFC_14028_2775293581: string;
+	export const EFC_14028_3789132940: string;
+	export const EFC_14028_4126798990: string;
 	export const FPS_BROWSER_APP_PROFILE_STRING: string;
 	export const FPS_BROWSER_USER_PROFILE_STRING: string;
 	export const GIT_ASKPASS: string;
+	export const GIT_LFS_PATH: string;
+	export const HERMES_GIT_BASH_PATH: string;
+	export const HERMES_HOME: string;
 	export const HOME: string;
 	export const HOMEDRIVE: string;
 	export const HOMEPATH: string;
 	export const INIT_CWD: string;
 	export const LANG: string;
+	export const LEVEL_ZERO_V1_SDK_PATH: string;
 	export const LOCALAPPDATA: string;
 	export const LOGONSERVER: string;
+	export const MOZ_PLUGIN_PATH: string;
 	export const NDI_RUNTIME_DIR_V2: string;
 	export const NDI_RUNTIME_DIR_V3: string;
 	export const NDI_RUNTIME_DIR_V4: string;
 	export const NDI_RUNTIME_DIR_V5: string;
 	export const NDI_RUNTIME_DIR_V6: string;
+	export const NGROK: string;
 	export const NODE: string;
 	export const NODE_ENV: string;
 	export const npm_command: string;
-	export const npm_config_allow_scripts: string;
 	export const npm_config_cache: string;
 	export const npm_config_engine_strict: string;
 	export const npm_config_globalconfig: string;
@@ -89,9 +103,13 @@ declare module '$env/static/private' {
 	export const npm_package_version: string;
 	export const NUMBER_OF_PROCESSORS: string;
 	export const OneDrive: string;
+	export const OneDriveConsumer: string;
+	export const OnlineServices: string;
+	export const OPENSSL_CONF: string;
 	export const OS: string;
 	export const Path: string;
 	export const PATHEXT: string;
+	export const platformcode: string;
 	export const PROCESSOR_ARCHITECTURE: string;
 	export const PROCESSOR_IDENTIFIER: string;
 	export const PROCESSOR_LEVEL: string;
@@ -102,6 +120,8 @@ declare module '$env/static/private' {
 	export const PROMPT: string;
 	export const PSModulePath: string;
 	export const PUBLIC: string;
+	export const RegionCode: string;
+	export const RENDER_API_KEY: string;
 	export const SESSIONNAME: string;
 	export const SystemDrive: string;
 	export const SystemRoot: string;
@@ -120,6 +140,8 @@ declare module '$env/static/private' {
 	export const VSCODE_INJECTION: string;
 	export const VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 	export const windir: string;
+	export const WXWIN: string;
+	export const ZES_ENABLE_SYSMAN: string;
 }
 
 /**
@@ -208,7 +230,10 @@ declare module '$env/dynamic/private' {
 	export const env: {
 		ALLUSERSPROFILE: string;
 		APPDATA: string;
+		ChocolateyInstall: string;
+		ChocolateyLastPathUpdate: string;
 		CHROME_CRASHPAD_PIPE_NAME: string;
+		CLAUDE_CODE_SSE_PORT: string;
 		COLOR: string;
 		COLORTERM: string;
 		CommonProgramFiles: string;
@@ -217,25 +242,36 @@ declare module '$env/dynamic/private' {
 		ComSpec: string;
 		DriverData: string;
 		EDITOR: string;
+		EFC_14028_1262719628: string;
+		EFC_14028_1592913036: string;
+		EFC_14028_2283032206: string;
+		EFC_14028_2775293581: string;
+		EFC_14028_3789132940: string;
+		EFC_14028_4126798990: string;
 		FPS_BROWSER_APP_PROFILE_STRING: string;
 		FPS_BROWSER_USER_PROFILE_STRING: string;
 		GIT_ASKPASS: string;
+		GIT_LFS_PATH: string;
+		HERMES_GIT_BASH_PATH: string;
+		HERMES_HOME: string;
 		HOME: string;
 		HOMEDRIVE: string;
 		HOMEPATH: string;
 		INIT_CWD: string;
 		LANG: string;
+		LEVEL_ZERO_V1_SDK_PATH: string;
 		LOCALAPPDATA: string;
 		LOGONSERVER: string;
+		MOZ_PLUGIN_PATH: string;
 		NDI_RUNTIME_DIR_V2: string;
 		NDI_RUNTIME_DIR_V3: string;
 		NDI_RUNTIME_DIR_V4: string;
 		NDI_RUNTIME_DIR_V5: string;
 		NDI_RUNTIME_DIR_V6: string;
+		NGROK: string;
 		NODE: string;
 		NODE_ENV: string;
 		npm_command: string;
-		npm_config_allow_scripts: string;
 		npm_config_cache: string;
 		npm_config_engine_strict: string;
 		npm_config_globalconfig: string;
@@ -257,9 +293,13 @@ declare module '$env/dynamic/private' {
 		npm_package_version: string;
 		NUMBER_OF_PROCESSORS: string;
 		OneDrive: string;
+		OneDriveConsumer: string;
+		OnlineServices: string;
+		OPENSSL_CONF: string;
 		OS: string;
 		Path: string;
 		PATHEXT: string;
+		platformcode: string;
 		PROCESSOR_ARCHITECTURE: string;
 		PROCESSOR_IDENTIFIER: string;
 		PROCESSOR_LEVEL: string;
@@ -270,6 +310,8 @@ declare module '$env/dynamic/private' {
 		PROMPT: string;
 		PSModulePath: string;
 		PUBLIC: string;
+		RegionCode: string;
+		RENDER_API_KEY: string;
 		SESSIONNAME: string;
 		SystemDrive: string;
 		SystemRoot: string;
@@ -288,6 +330,8 @@ declare module '$env/dynamic/private' {
 		VSCODE_INJECTION: string;
 		VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 		windir: string;
+		WXWIN: string;
+		ZES_ENABLE_SYSMAN: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}
