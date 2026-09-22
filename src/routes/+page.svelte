@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import emailjs from "@emailjs/browser";
   import type { Component } from "svelte";
   type Skill = { name: string; level: string; pct: number };
   type SkillGroup = { title: string; icon: Component; items: Skill[] };
@@ -255,31 +256,58 @@
     sent = $state(false),
     sendError = $state(false),
     copied = $state(false);
+  // EmailJS (free, customizable templates): fill these in from
+  // https://dashboard.emailjs.com — until then the form keeps working
+  // through the FormSubmit fallback below.
+  const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
+  const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
+  const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
+  const emailJsReady =
+    !EMAILJS_PUBLIC_KEY.startsWith("YOUR_") &&
+    !EMAILJS_SERVICE_ID.startsWith("YOUR_") &&
+    !EMAILJS_TEMPLATE_ID.startsWith("YOUR_");
+  async function sendViaFormSubmit() {
+    const res = await fetch(
+      "https://formsubmit.co/ajax/jedboyjabagat@gmail.com",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          subject,
+          message,
+          _subject: `Portfolio contact: ${subject || "New message"}`,
+          _captcha: "false",
+        }),
+      },
+    );
+    if (!res.ok) throw new Error(`Formsubmit: ${res.status}`);
+  }
   async function handleSubmit(e: Event) {
     e.preventDefault();
     if (sending) return;
     sending = true;
     sendError = false;
     try {
-      const res = await fetch(
-        "https://formsubmit.co/ajax/jedboyjabagat@gmail.com",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            subject,
+      if (emailJsReady) {
+        await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          {
+            from_name: name,
+            reply_to: email,
+            subject: subject || "New message",
             message,
-            _subject: `Portfolio contact: ${subject || "New message"}`,
-            _captcha: "false",
-          }),
-        },
-      );
-      if (!res.ok) throw new Error(`Formsubmit: ${res.status}`);
+          },
+          { publicKey: EMAILJS_PUBLIC_KEY },
+        );
+      } else {
+        await sendViaFormSubmit();
+      }
       sent = true;
       name = "";
       email = "";
