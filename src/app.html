@@ -36,7 +36,7 @@
 
 	<!-- Additional SEO -->
 	<link rel="canonical" href="https://jadeangco-portfolio.onrender.com/" />
-	<meta name="theme-color" content="#1ed760" />
+	<meta name="theme-color" content="#e60000" />
 
 	<!-- Geo Tags -->
 	<meta name="geo.region" content="PH-SUR" />
@@ -44,17 +44,27 @@
 	<meta name="geo.position" content="8.1957;126.3119" />
 	<meta name="ICBM" content="8.1957, 126.3119" />
 
+	<script>
+		try {
+			var saved = localStorage.getItem("theme");
+			var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+			document.documentElement.setAttribute("data-theme", saved || (prefersLight ? "light" : "dark"));
+		} catch (e) {
+			document.documentElement.setAttribute("data-theme", "dark");
+		}
+	</script>
+
 	%sveltekit.head%
 </head>
 
 <body data-sveltekit-preload-data="hover">
 	<div style="display: contents">%sveltekit.body%</div>
+	<script type="text/javascript">
+	    (function(c,l,a,r,i,t,y){
+	        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+	        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+	        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+	    })(window, document, "clarity", "script", "ycjnunp0xk");
+	</script>
 </body>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "ycjnunp0xk");
-</script>
 </html>
