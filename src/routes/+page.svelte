@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import type { Component } from "svelte";
   type Skill = { name: string; level: string; pct: number };
-  type SkillGroup = { title: string; icon: string; items: Skill[] };
+  type SkillGroup = { title: string; icon: Component; items: Skill[] };
   type Project = {
     title: string;
     kind: string;
@@ -20,34 +21,53 @@
     status: "Suspended" | "Live";
     url: string;
   };
-  import { Moon, Sun } from "@lucide/svelte";
+  import {
+    Moon,
+    Sun,
+    Sparkles,
+    PenTool,
+    Code,
+    RefreshCw,
+    LayoutGrid,
+    Server,
+    Database,
+    Wrench,
+    ArrowUpRight,
+    ArrowRight,
+    Mail,
+    Check,
+    Copy,
+    Menu,
+    X,
+    BadgeCheck,
+  } from "@lucide/svelte";
 
   const stats = [
-    { value: "7", label: "Projects Built", sub: "Shipped" },
-    { value: "5", label: "Live Sites", sub: "Deployed" },
-    { value: "4+", label: "Clients Served", sub: "Trusted" },
-    { value: "∞", label: "Experiments", sub: "Exploring" },
+    { value: "7", label: "Projects built" },
+    { value: "5", label: "Live sites" },
+    { value: "4+", label: "Clients served" },
+    { value: "∞", label: "Experiments" },
   ];
   const aboutCards = [
     {
       title: "Detail Obsessed",
       desc: "Smooth micro-interactions, 60fps motion & pixel-perfect polish.",
-      icon: "✦",
+      icon: Sparkles,
     },
     {
       title: "Design-Minded",
       desc: "Figma to code with precision — systems that scale beautifully.",
-      icon: "⬣",
+      icon: PenTool,
     },
     {
       title: "Clean Code",
       desc: "Readable, maintainable, tested. Future-you will thank you.",
-      icon: "{ }",
+      icon: Code,
     },
     {
       title: "Always Learning",
       desc: "Chasing new patterns, tools & delightful UX ideas daily.",
-      icon: "↻",
+      icon: RefreshCw,
     },
   ];
   const aboutTags = [
@@ -70,7 +90,7 @@
   const skillGroups: SkillGroup[] = [
     {
       title: "Frontend",
-      icon: "⬢",
+      icon: LayoutGrid,
       items: [
         { name: "SvelteKit", level: "Intermediate", pct: 65 },
         { name: "Nuxt / Vue.js", level: "Intermediate", pct: 60 },
@@ -81,7 +101,7 @@
     },
     {
       title: "Backend",
-      icon: "⬣",
+      icon: Server,
       items: [
         { name: "CodeIgniter", level: "Intermediate", pct: 65 },
         { name: "Hono", level: "Beginner", pct: 30 },
@@ -90,7 +110,7 @@
     },
     {
       title: "Database",
-      icon: "▦",
+      icon: Database,
       items: [
         { name: "MySQL", level: "Intermediate", pct: 65 },
         { name: "MongoDB", level: "Intermediate", pct: 55 },
@@ -98,7 +118,7 @@
     },
     {
       title: "Tools & DevOps",
-      icon: "⚙",
+      icon: Wrench,
       items: [
         { name: "Git & GitHub", level: "Advanced", pct: 85 },
         { name: "Vercel", level: "Advanced", pct: 85 },
@@ -317,6 +337,10 @@
   }
   let theme: "dark" | "light" = $state("dark");
   let scrolled = $state(false);
+  let menuOpen = $state(false);
+  function closeMenu() {
+    menuOpen = false;
+  }
   onMount(() => {
     const saved = localStorage.getItem("theme") as "dark" | "light" | null;
     const prefersLight = window.matchMedia(
@@ -352,6 +376,7 @@
 			"@context": "https://schema.org",
 			"@type": "Person",
 			"name": "Jade Jabagat Angco",
+			"gender": "Male",
 			"url": "https://jadeangco-portfolio.onrender.com",
 			"image": "https://jadeangco-portfolio.onrender.com/Jade.jpg",
 			"jobTitle": "Front-End Developer",
@@ -359,7 +384,7 @@
 				"@type": "Organization",
 				"name": "Freelance"
 			},
-			"description": "Front-End Developer specializing in SvelteKit, Vue.js, and modern web technologies. Building fast, responsive interfaces with clean code.",
+			"description": "Male Front-End Developer specializing in SvelteKit, Vue.js, and modern web technologies. Building fast, responsive interfaces with clean code.",
 			"address": {
 				"@type": "PostalAddress",
 				"addressLocality": "Bislig City",
@@ -396,11 +421,18 @@
 	`}
 </svelte:head>
 
+<svelte:window
+  onkeydown={(e) => {
+    if (e.key === "Escape") menuOpen = false;
+  }}
+/>
+
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="topline" aria-hidden="true"></div>
 
 <header class="mast" class:scrolled>
   <div class="section-inner mast-inner">
-    <a href="#top" class="brand">
+    <a href="#main" class="brand">
       <span class="brand-mark" aria-hidden="true">JA</span>
       <span class="brand-text">
         <strong>Jade Angco</strong>
@@ -409,10 +441,10 @@
     </a>
     <nav aria-label="Sections">
       <ul class="mast-nav">
-        {#each navLinks as link, i}
+        {#each navLinks as link}
           <li>
             <a href={`#${link.toLowerCase().replaceAll(" ", "-")}`}>
-              <span class="nav-num">0{i + 1}</span>{link}
+              {link}
             </a>
           </li>
         {/each}
@@ -434,12 +466,45 @@
           {/if}
         </span>
       </button>
-      <!-- <a href="#contact" class="btn btn-primary btn-sm">Hire me</a> -->
+      <button
+        type="button"
+        class="menu-button"
+        onclick={() => (menuOpen = !menuOpen)}
+        aria-expanded={menuOpen}
+        aria-controls="mobile-menu"
+        aria-label={menuOpen ? "Close menu" : "Open menu"}
+      >
+        <span aria-hidden="true">
+          {#if menuOpen}
+            <X size={20} strokeWidth={2.25} />
+          {:else}
+            <Menu size={20} strokeWidth={2.25} />
+          {/if}
+        </span>
+      </button>
     </div>
   </div>
+  {#if menuOpen}
+    <div class="mobile-panel" id="mobile-menu">
+      <nav aria-label="Sections">
+        <ul>
+          {#each navLinks as link}
+            <li>
+              <a
+                href={`#${link.toLowerCase().replaceAll(" ", "-")}`}
+                onclick={closeMenu}
+              >
+                {link}
+              </a>
+            </li>
+          {/each}
+        </ul>
+      </nav>
+    </div>
+  {/if}
 </header>
 
-<main id="top">
+<main id="main">
   <!-- HERO -->
   <section class="section hero">
     <div class="section-inner hero-grid">
@@ -450,7 +515,6 @@
           <span class="status-sep" aria-hidden="true">/</span>
           <span>Bislig City, PH — Remote worldwide</span>
         </p>
-        <p class="kicker">Portfolio 2026 — SvelteKit & Vue</p>
         <h1 class="hero-title">
           Interfaces<br />with intent<span class="dot">.</span>
         </h1>
@@ -465,10 +529,16 @@
             href="https://reziofy.web.app/jadeangco?type=resume"
             class="btn btn-primary"
             onclick={trackResume}
-            >View resume <span aria-hidden="true">→</span></a
+            >View resume
+            <span class="btn-icon" aria-hidden="true"
+              ><ArrowUpRight size={15} strokeWidth={2.5} /></span
+            ></a
           >
           <a href="#projects" class="btn btn-ghost"
-            >Selected work <span aria-hidden="true">↗</span></a
+            >Selected work
+            <span aria-hidden="true"
+              ><ArrowUpRight size={15} strokeWidth={2.5} /></span
+            ></a
           >
         </div>
         <div class="hero-socials">
@@ -478,7 +548,7 @@
             rel="noopener"
             class="soc"
             aria-label="GitHub"
-            title="GitHub">GitHub <span aria-hidden="true">↗</span></a
+            title="GitHub">GitHub</a
           >
           <a
             href="https://www.facebook.com/just.jeddd"
@@ -486,16 +556,20 @@
             rel="noopener"
             class="soc"
             aria-label="Facebook"
-            title="Facebook">Facebook <span aria-hidden="true">↗</span></a
+            title="Facebook">Facebook</a
           >
           <a
             href="mailto:jedboyjabagat@gmail.com?subject=Portfolio%20inquiry"
             class="soc"
             aria-label="Email"
-            title="Email"
-            rel="external"
-            data-sveltekit-preload="false"
-            data-sveltekit-reload>Email <span aria-hidden="true">✉</span></a
+            title="Email">Email</a
+          >
+          <a
+            href="https://reziofy.web.app/jadeangco?type=resume"
+            class="soc"
+            aria-label="Resume"
+            title="Resume"
+            onclick={trackResume}>Resume</a
           >
         </div>
       </div>
@@ -518,14 +592,13 @@
       </figure>
     </div>
     <div class="section-inner">
-      <dl class="ledger">
+      <ul class="trust" aria-label="Highlights">
         {#each stats as s}
-          <div class="ledger-cell">
-            <dt>{s.sub}</dt>
-            <dd><strong>{s.value}</strong><span>{s.label}</span></dd>
-          </div>
+          <li>
+            <strong>{s.value}</strong><span>{s.label}</span>
+          </li>
         {/each}
-      </dl>
+      </ul>
     </div>
   </section>
 
@@ -535,9 +608,10 @@
       {#each [0, 1] as dup}
         <span class="ticker-seq">
           {#each tickerItems as t}
-            <span class="ticker-item">{t}</span><span class="ticker-star"
-              >✦</span
-            >
+            <span class="ticker-item">{t}</span><span
+              class="ticker-dot"
+              aria-hidden="true"
+            ></span>
           {/each}
         </span>
       {/each}
@@ -549,7 +623,6 @@
     <div class="section-inner">
       <div class="sec-top">
         <div>
-          <span class="sec-index">01 — Profile</span>
           <h2 class="sec-title">
             Engineer with an editor’s eye<span class="dot">.</span>
           </h2>
@@ -572,8 +645,13 @@
             deconstructing delightful UI patterns and shipping side projects.
           </p>
           <p class="cert">
-            <strong>Certified Computer Systems Servicing NCII</strong> — solid roots
-            in both hardware & software.
+            <span aria-hidden="true"
+              ><BadgeCheck size={18} strokeWidth={2.25} /></span
+            >
+            <span>
+              <strong>Certified Computer Systems Servicing NCII</strong> — solid
+              roots in both hardware & software.
+            </span>
           </p>
           <div class="tag-cloud">
             {#each aboutTags as t}<span class="tag">{t}</span>{/each}
@@ -581,11 +659,14 @@
         </div>
         <ol class="principles">
           {#each aboutCards as card, i}
+            {@const PIcon = card.icon}
             <li>
               <span class="p-num">{String(i + 1).padStart(2, "0")}</span>
               <div>
                 <h4>
-                  <span class="p-icon" aria-hidden="true">{card.icon}</span>
+                  <span class="p-icon" aria-hidden="true"
+                    ><PIcon size={16} strokeWidth={2.25} /></span
+                  >
                   {card.title}
                 </h4>
                 <p>{card.desc}</p>
@@ -602,7 +683,6 @@
     <div class="section-inner">
       <div class="sec-top">
         <div>
-          <span class="sec-index">02 — Stack</span>
           <h2 class="sec-title">What I work with<span class="dot">.</span></h2>
         </div>
         <p class="sec-sub">
@@ -611,10 +691,13 @@
         </p>
       </div>
       <div class="stack-grid">
-        {#each skillGroups as g, gi}
+        {#each skillGroups as g}
+          {@const GIcon = g.icon}
           <div class="stack-panel">
             <div class="stack-head">
-              <span class="stack-index">0{gi + 1}</span>
+              <span class="stack-icon" aria-hidden="true"
+                ><GIcon size={15} strokeWidth={2.25} /></span
+              >
               <h3>{g.title}</h3>
               <span class="chip">{g.items.length} skills</span>
             </div>
@@ -646,7 +729,6 @@
     <div class="section-inner">
       <div class="sec-top">
         <div>
-          <span class="sec-index">03 — Selected work</span>
           <h2 class="sec-title">Things I’ve built<span class="dot">.</span></h2>
         </div>
         <div class="filters" role="group" aria-label="Filter projects">
@@ -680,7 +762,9 @@
                 >
                   {p.status}
                 </span>
-                <span class="work-open" aria-hidden="true">↗</span>
+                <span class="work-open" aria-hidden="true"
+                  ><ArrowUpRight size={17} strokeWidth={2.5} /></span
+                >
               </a>
             {:else}
               <div class="work-media">
@@ -711,7 +795,17 @@
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Visit site <span aria-hidden="true">↗</span>
+                  Visit site
+                  <span aria-hidden="true"
+                    ><ArrowUpRight size={14} strokeWidth={2.5} /></span
+                  >
+                </a>
+              {:else}
+                <a class="text-link" href="#contact">
+                  Case study on request
+                  <span aria-hidden="true"
+                    ><ArrowRight size={14} strokeWidth={2.5} /></span
+                  >
                 </a>
               {/if}
             </div>
@@ -726,7 +820,6 @@
     <div class="section-inner">
       <div class="sec-top">
         <div>
-          <span class="sec-index">04 — Live on the web</span>
           <h2 class="sec-title">Hosted websites<span class="dot">.</span></h2>
         </div>
         <p class="sec-sub">
@@ -757,7 +850,9 @@
               rel="noopener noreferrer"
               aria-label={`Visit ${h.title}`}
             >
-              <span aria-hidden="true">↗</span>
+              <span aria-hidden="true"
+                ><ArrowUpRight size={18} strokeWidth={2.25} /></span
+              >
             </a>
           </li>
         {/each}
@@ -770,7 +865,6 @@
     <div class="section-inner">
       <div class="sec-top">
         <div>
-          <span class="sec-index">05 — Contact</span>
           <h2 class="sec-title">
             Let’s build something sharp<span class="dot">.</span>
           </h2>
@@ -782,7 +876,7 @@
       </div>
       <div class="contact-grid">
         <aside class="contact-aside">
-          <p class="aside-kicker">
+          <p class="aside-note">
             Typically replies within <strong>24 hours</strong>. For urgent —
             Facebook Messenger is fastest.
           </p>
@@ -793,20 +887,20 @@
                 ? "Copied to clipboard!"
                 : "jedboyjabagat@gmail.com"}</strong
             >
-            <span class="channel-arrow" aria-hidden="true"
-              >{copied ? "✓" : "→"}</span
-            >
+            <span class="channel-arrow" aria-hidden="true">
+              {#if copied}
+                <Check size={16} strokeWidth={2.5} />
+              {:else}
+                <Copy size={16} strokeWidth={2.25} />
+              {/if}
+            </span>
           </button>
-          <a
-            href="mailto:jedboyjabagat@gmail.com?subject=Portfolio%20inquiry"
-            class="channel"
-            rel="external"
-            data-sveltekit-preload="false"
-            data-sveltekit-reload
-          >
+          <a href="mailto:jedboyjabagat@gmail.com?subject=Portfolio%20inquiry" class="channel">
             <span class="channel-label">Prefer your mail app?</span>
             <strong>Compose an email directly</strong>
-            <span class="channel-arrow" aria-hidden="true">✉</span>
+            <span class="channel-arrow" aria-hidden="true"
+              ><Mail size={16} strokeWidth={2.25} /></span
+            >
           </a>
           <a
             href="https://www.facebook.com/just.jeddd"
@@ -816,7 +910,9 @@
           >
             <span class="channel-label">Facebook</span>
             <strong>facebook.com/just.jeddd</strong>
-            <span class="channel-arrow" aria-hidden="true">→</span>
+            <span class="channel-arrow" aria-hidden="true"
+              ><ArrowRight size={16} strokeWidth={2.25} /></span
+            >
           </a>
           <a
             href="https://github.com/justjedjed"
@@ -826,7 +922,9 @@
           >
             <span class="channel-label">GitHub</span>
             <strong>github.com/justjedjed</strong>
-            <span class="channel-arrow" aria-hidden="true">→</span>
+            <span class="channel-arrow" aria-hidden="true"
+              ><ArrowRight size={16} strokeWidth={2.25} /></span
+            >
           </a>
           <div class="channel static">
             <span class="channel-label">Location</span>
@@ -835,32 +933,43 @@
         </aside>
         <form class="contact-form" onsubmit={handleSubmit}>
           <div class="form-row">
-            <label
+            <label for="cf-name"
               ><span>Name *</span><input
+                id="cf-name"
+                name="name"
                 type="text"
                 bind:value={name}
                 placeholder="Ada Lovelace"
+                autocomplete="name"
                 required
               /></label
             >
-            <label
+            <label for="cf-email"
               ><span>Email *</span><input
+                id="cf-email"
+                name="email"
                 type="email"
                 bind:value={email}
                 placeholder="ada@lovelace.dev"
+                autocomplete="email"
                 required
               /></label
             >
           </div>
-          <label
+          <label for="cf-subject"
             ><span>Subject</span><input
+              id="cf-subject"
+              name="subject"
               type="text"
               bind:value={subject}
               placeholder="Project inquiry, collaboration..."
+              autocomplete="off"
             /></label
           >
-          <label
+          <label for="cf-message"
             ><span>Message *</span><textarea
+              id="cf-message"
+              name="message"
               rows="5"
               bind:value={message}
               placeholder="Tell me about your idea..."
@@ -873,11 +982,18 @@
             class:sent
             disabled={sending}
           >
-            {sending
-              ? "Sending…"
-              : sent
-                ? "✓ Message sent — thank you!"
-                : "Send message →"}
+            {#if sending}
+              Sending…
+            {:else if sent}
+              <span class="btn-icon" aria-hidden="true"
+                ><Check size={15} strokeWidth={2.5} /></span
+              > Message sent — thank you!
+            {:else}
+              Send message
+              <span class="btn-icon" aria-hidden="true"
+                ><ArrowRight size={15} strokeWidth={2.5} /></span
+              >
+            {/if}
           </button>
           {#if sendError}
             <p class="form-note" role="alert">
@@ -886,7 +1002,7 @@
             </p>
           {:else}
             <p class="form-note">
-              By sending, you agree to be awesome. No spam, ever.
+              I reply within 24 hours. Your details stay private.
             </p>
           {/if}
         </form>
@@ -899,13 +1015,13 @@
   <div class="section-inner footer-inner">
     <p class="foot-big">Available worldwide<span class="dot">.</span></p>
     <div class="foot-row">
-      <span class="foot-brand">◉ &lt;JA/&gt; <span>2026</span></span>
+      <span class="foot-brand">&lt;JA/&gt; <span>2026</span></span>
       <span class="foot-mid"
         >Crafted in Bislig · <span class="avail">● Available for new work</span
         ></span
       >
       <span class="foot-legal"
-        >© Jade Jabagat Angco — Designed & built with ♥</span
+        >© 2026 Jade Jabagat Angco — Designed & built in Bislig City, PH</span
       >
     </div>
   </div>
@@ -999,10 +1115,49 @@
     color: var(--ink);
     border-color: var(--primary);
   }
-  .nav-num {
-    font-size: 0.6rem;
+  .menu-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    color: var(--ink);
+  }
+  .menu-button:hover {
+    background: var(--surface-hover);
+    border-color: var(--ink);
+  }
+  .menu-button span {
+    display: inline-flex;
+  }
+  .mobile-panel {
+    border-top: 1px solid var(--border);
+    padding: 0.6rem 1.5rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: var(--nav-bg);
+  }
+  .mobile-panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .mobile-panel a:not(.btn) {
+    display: block;
+    padding: 0.7rem 0.1rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-panel a:not(.btn):hover {
     color: var(--primary);
-    font-weight: 800;
   }
   .mast-actions {
     display: flex;
@@ -1085,14 +1240,6 @@
   .status-sep {
     color: var(--primary);
   }
-  .kicker {
-    margin-top: 1.4rem;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--primary);
-  }
   .hero-title {
     font-size: clamp(3rem, 7.5vw, 4.9rem);
     font-weight: 700;
@@ -1124,6 +1271,11 @@
     margin-top: 1.7rem;
     flex-wrap: wrap;
   }
+  .hero-cta .btn > span,
+  .btn-icon {
+    display: inline-flex;
+    flex: none;
+  }
   .hero-socials {
     display: flex;
     gap: 1.1rem;
@@ -1131,6 +1283,9 @@
     flex-wrap: wrap;
   }
   .soc {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
     font-size: 0.72rem;
     font-weight: 800;
     letter-spacing: 0.1em;
@@ -1193,44 +1348,36 @@
     display: inline-block;
   }
 
-  .ledger {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+  .trust {
+    display: flex;
+    flex-wrap: wrap;
     margin: 2.6rem 0 0;
     padding: 0;
+    list-style: none;
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-lg);
     background: var(--surface);
     overflow: hidden;
   }
-  .ledger-cell {
-    padding: 1.1rem 1.25rem;
-    border-left: 1px solid var(--border);
-  }
-  .ledger-cell:first-child {
-    border-left: none;
-    border-top: 3px solid var(--primary);
-  }
-  .ledger-cell dt {
-    font-size: 0.62rem;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-  }
-  .ledger-cell dd {
-    margin: 0.4rem 0 0;
+  .trust li {
+    flex: 1 1 0;
     display: flex;
     align-items: baseline;
     gap: 0.6rem;
+    padding: 1.1rem 1.25rem;
+    border-left: 1px solid var(--border);
+    white-space: nowrap;
   }
-  .ledger-cell strong {
+  .trust li:first-child {
+    border-left: none;
+  }
+  .trust strong {
     font-family: var(--font-display);
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.02em;
   }
-  .ledger-cell span {
+  .trust span {
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -1267,9 +1414,14 @@
     padding: 0 1rem;
     white-space: nowrap;
   }
-  .ticker-star {
-    font-size: 0.7rem;
+  .ticker-dot {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    margin: 0 1rem;
+    background: currentColor;
     opacity: 0.8;
+    transform: rotate(45deg);
   }
   @keyframes marquee {
     to {
@@ -1277,9 +1429,20 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    :global(html) {
+      scroll-behavior: auto;
+    }
     .ticker-track,
     .pulse {
       animation: none;
+    }
+    .work-media img,
+    .work-open,
+    .btn {
+      transition: none;
+    }
+    .work-row:hover .work-media img {
+      transform: none;
     }
   }
 
@@ -1301,10 +1464,19 @@
     font-size: 0.94rem;
   }
   .cert {
-    border-left: 3px solid var(--primary);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    border: 1px solid var(--border-strong);
     background: var(--green-tint);
-    padding: 0.7rem 0.9rem;
-    border-radius: 0 8px 8px 0;
+    padding: 0.8rem 0.9rem;
+    border-radius: var(--radius-md);
+  }
+  .cert > span:first-child {
+    display: inline-flex;
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--primary);
   }
   .cert strong {
     color: var(--ink);
@@ -1339,6 +1511,8 @@
     margin-bottom: 0.3rem;
   }
   .p-icon {
+    display: inline-flex;
+    vertical-align: -3px;
     color: var(--primary);
     margin-right: 0.35rem;
   }
@@ -1368,14 +1542,14 @@
     padding-bottom: 0.9rem;
     border-bottom: 1px solid var(--border);
   }
-  .stack-index {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.75rem;
+  .stack-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: var(--on-primary);
     background: var(--primary);
     border-radius: 6px;
-    padding: 0.25rem 0.5rem;
+    padding: 0.3rem;
   }
   .stack-head h3 {
     font-size: 1.05rem;
@@ -1518,6 +1692,10 @@
     opacity: 1;
     transform: translateY(0);
   }
+  .channel-arrow,
+  .site-visit span {
+    display: inline-flex;
+  }
   .work-meta {
     display: flex;
     align-items: baseline;
@@ -1556,6 +1734,7 @@
   }
   .text-link {
     display: inline-flex;
+    align-items: center;
     gap: 0.35rem;
     margin-top: 1rem;
     font-size: 0.74rem;
@@ -1664,12 +1843,12 @@
     gap: 0.65rem;
     box-shadow: var(--shadow-heavy);
   }
-  .aside-kicker {
+  .aside-note {
     font-size: 0.9rem;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.92);
   }
-  .aside-kicker strong {
+  .aside-note strong {
     color: #fff;
   }
   .channel {
@@ -1761,7 +1940,7 @@
   }
   .contact-form input::placeholder,
   .contact-form textarea::placeholder {
-    color: var(--ink-faint);
+    color: var(--placeholder);
   }
   .contact-form input:focus,
   .contact-form textarea:focus {
@@ -1830,17 +2009,15 @@
     .stack-grid {
       grid-template-columns: 1fr;
     }
-    .ledger {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .ledger-cell:nth-child(3) {
-      border-left: none;
-    }
-    .ledger-cell {
+    .trust li {
+      flex: 1 1 40%;
       border-top: 1px solid var(--border);
     }
-    .ledger-cell:nth-child(-n + 2) {
+    .trust li:nth-child(-n + 2) {
       border-top: none;
+    }
+    .trust li:nth-child(3) {
+      border-left: none;
     }
     .work-row {
       grid-template-columns: 1fr;
@@ -1850,12 +2027,17 @@
       grid-template-columns: auto 1fr auto;
     }
     .site-thumb {
-      display: none;
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
     }
   }
   @media (max-width: 860px) {
     .mast-nav {
       display: none;
+    }
+    .menu-button {
+      display: inline-flex;
     }
   }
   @media (max-width: 560px) {
