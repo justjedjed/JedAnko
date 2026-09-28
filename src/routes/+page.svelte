@@ -12,6 +12,8 @@
     desc: string;
     tags: string[];
     image: string;
+    /** Auto-refreshing screenshot URL (falls back to `image` offline). */
+    liveShot?: string;
     url?: string;
     year: string;
     role: string;
@@ -199,6 +201,8 @@
       desc: "Whisper freely — no names, no pressure. Real thoughts, real-time, reimagined.",
       tags: ["Svelte", "Firebase", "DaisyUI"],
       image: "/parinig.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Fparinig.vercel.app?w=800",
       url: "https://parinig.vercel.app/",
       year: "2025",
       role: "Design & Frontend",
@@ -216,6 +220,8 @@
       desc: "Polished resumes in minutes — smart templates, live preview & instant PDF.",
       tags: ["Svelte", "Firebase", "DaisyUI"],
       image: "/reziofy.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Freziofy.web.app?w=800",
       url: "https://reziofy.web.app/",
       year: "2025",
       role: "Design & Frontend",
@@ -292,6 +298,16 @@
     selectedProject = null;
     document.body.style.overflow = "";
   }
+  /** Prefer the auto-refreshing screenshot; fall back to the static shot. */
+  function shotSrc(p: Project): string {
+    return p.liveShot ?? p.image;
+  }
+  function shotFallback(e: Event, p: Project) {
+    const img = e.currentTarget as HTMLImageElement;
+    if (img.dataset.fbk) return;
+    img.dataset.fbk = "1";
+    img.src = p.image;
+  }
   async function checkSite(url: string) {
     liveStatus[url] = "checking";
     const started = performance.now();
@@ -325,6 +341,8 @@
     "Vercel",
     "Open for work",
   ];
+  // Paste REAL client quotes here — testimonial cards stay hidden until you do.
+  const testimonials: { quote: string; name: string; role: string }[] = [];
   const navLinks = ["About", "Skills", "Projects", "Live Sites", "Blog", "Contact"];
   const latestPosts = $derived(blogPosts.slice(0, 3));
   const navHref = (link: string) =>
@@ -717,7 +735,7 @@
       <div class="hero-copy">
         <p class="status-row" title="Purok 4 Dela Silva Street, Poblacion, Bislig City, Surigao del Sur 8311, Philippines">
           <span class="pulse" aria-hidden="true"></span>
-          <span>Available for work</span>
+          <span>Available part-time</span>
           <span class="status-sep" aria-hidden="true">/</span>
           <span>Poblacion, Bislig City, PH — Remote worldwide</span>
         </p>
@@ -787,7 +805,7 @@
             ><strong>Jade Jabagat Angco</strong> — BS Computer Science, NEMSU Tagbina</span
           >
           <span class="chip live"
-            ><span class="chip-dot" aria-hidden="true"></span>Open</span
+            ><span class="chip-dot" aria-hidden="true"></span>Part-time</span
           >
         </figcaption>
       </figure>
@@ -876,6 +894,73 @@
           {/each}
         </ol>
       </div>
+    </div>
+  </section>
+
+  <!-- JOURNEY -->
+  <section class="section rule" id="journey">
+    <div class="section-inner">
+      <div class="sec-top">
+        <div>
+          <h2 class="sec-title">The road so far<span class="dot">.</span></h2>
+        </div>
+        <p class="sec-sub">Milestones, in order — no padding.</p>
+      </div>
+      <ol class="journey-list">
+        <li>
+          <span class="j-num">01</span>
+          <div>
+            <h3>BS Computer Science</h3>
+            <p>
+              North Eastern Mindanao State University, Tagbina — code,
+              systems, and how computers actually work.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="j-num">02</span>
+          <div>
+            <h3>NCII Certified</h3>
+            <p>
+              Computer Systems Servicing — hardware roots and an IT-support
+              background behind the frontend work.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="j-num">03</span>
+          <div>
+            <h3>5 client sites live</h3>
+            <p>
+              Hosting and maintaining MM Group websites on Nginx +
+              Cloudflare Tunnel — <a href="/work/mm-group-hosting"
+                >read the case study →</a
+              >
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="j-num">04</span>
+          <div>
+            <h3>Open for work</h3>
+            <p>
+              Freelance front-end and hosting, remote worldwide. <a
+                href="#contact">Start a project →</a
+              >
+            </p>
+          </div>
+        </li>
+      </ol>
+      {#if testimonials.length > 0}
+        <div class="quotes">
+          {#each testimonials as t}
+            <figure class="quote-card">
+              <blockquote>“{t.quote}”</blockquote>
+              <figcaption><strong>{t.name}</strong> — {t.role}</figcaption>
+            </figure>
+          {/each}
+        </div>
+      {/if}
     </div>
   </section>
 
@@ -990,9 +1075,10 @@
               }}
             >
               <img
-                src={p.image}
-                alt={`${p.title} — ${p.kind} preview`}
+                src={shotSrc(p)}
+                alt={`${p.title} — ${p.kind} live preview`}
                 loading="lazy" decoding="async"
+                onerror={(e) => shotFallback(e, p)}
               />
               <span
                 class="chip"
@@ -1057,6 +1143,7 @@
         {/each}
       </div>
       {#if selectedProject}
+        {@const sp = selectedProject}
         <div
           class="modal-backdrop"
           role="presentation"
@@ -1076,9 +1163,10 @@
           >
             <div class="modal-media">
               <img
-                src={selectedProject.image}
-                alt={`${selectedProject.title} — ${selectedProject.kind} preview`}
+                src={shotSrc(sp)}
+                alt={`${sp.title} — ${sp.kind} live preview`}
                 decoding="async"
+                onerror={(e) => shotFallback(e, sp)}
               />
               <button
                 type="button"
@@ -1155,6 +1243,9 @@
         <p class="sec-sub">
           Real-world sites designed, developed & deployed for clients — live,
           fast & maintained.
+          <a class="sec-link" href="/work/mm-group-hosting"
+            >Read the hosting case study →</a
+          >
         </p>
       </div>
       <ul class="site-list">
@@ -1440,7 +1531,7 @@
       <span class="foot-brand">&lt;JA/&gt; <span>2026</span></span>
       <a href="/blog" class="foot-blog">Blog ↗</a>
       <span class="foot-mid"
-        >Crafted in Poblacion, Bislig City · <span class="avail">● Available for new work</span
+        >Crafted in Poblacion, Bislig City · <span class="avail">● Available part-time</span
         ></span
       >
       <span class="foot-legal"
@@ -2201,6 +2292,83 @@
     display: flex;
     justify-content: center;
     margin-top: 1.5rem;
+  }
+
+  .journey-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  .journey-list li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .j-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--primary);
+  }
+  .journey-list h3 {
+    font-size: 0.98rem;
+    margin-bottom: 0.35rem;
+  }
+  .journey-list p {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .journey-list p a {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .journey-list p a:hover {
+    text-decoration: underline;
+  }
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+  .quote-card {
+    margin: 0;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 1.1rem 1.2rem;
+  }
+  .quote-card blockquote {
+    margin: 0 0 0.6rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .quote-card figcaption {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 980px) {
+    .journey-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .quotes {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .journey-list {
+      grid-template-columns: 1fr;
+    }
   }
 
   .text-link {

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import BlogTopbar from '$lib/components/BlogTopbar.svelte';
+  import BlogFooter from '$lib/components/BlogFooter.svelte';
   import { posts, siteUrl } from '$lib/posts';
 
   const title = 'Blog — Jade Angco | Front-End Developer';
@@ -20,6 +22,12 @@
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={desc} />
   <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="Jade Angco — Blog"
+    href={`${siteUrl}/blog/rss.xml`}
+  />
   {@html `
 		<script type="application/ld+json">
 		{
@@ -40,19 +48,14 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="topbar">
-  <div class="section-inner topbar-inner">
-    <a href="/" class="brandlink" aria-label="Back to portfolio">
-      <span aria-hidden="true">←</span> Jade Angco
-    </a>
-    <nav aria-label="Sections">
-      <a href="/#about">About</a>
-      <a href="/#projects">Projects</a>
-      <a href="/#live-sites">Live Sites</a>
-      <a href="/#contact">Contact</a>
-    </nav>
-  </div>
-</header>
+<BlogTopbar
+  links={[
+    { label: 'About', href: '/#about' },
+    { label: 'Projects', href: '/#projects' },
+    { label: 'Live Sites', href: '/#live-sites' },
+    { label: 'Contact', href: '/#contact' },
+  ]}
+/>
 
 <main id="main">
   <section class="section">
@@ -92,52 +95,9 @@
   </section>
 </main>
 
-<footer class="foot">
-  <div class="section-inner foot-inner">
-    <a href="/">← Back to portfolio</a>
-    <span>© 2026 Jade Jabagat Angco</span>
-  </div>
-</footer>
+<BlogFooter backHref="/" backLabel="← Back to portfolio" />
 
 <style>
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: var(--nav-bg);
-    backdrop-filter: blur(16px) saturate(1.3);
-    border-bottom: 1px solid var(--border);
-  }
-  .topbar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 0.85rem;
-    padding-bottom: 0.85rem;
-  }
-  .brandlink {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-  .brandlink:hover {
-    color: var(--primary);
-  }
-  .topbar nav {
-    display: flex;
-    gap: 1.2rem;
-  }
-  .topbar nav a {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-  .topbar nav a:hover {
-    color: var(--primary);
-  }
   .eyebrow {
     margin-bottom: 0.6rem;
   }
@@ -197,31 +157,5 @@
   .textlink:hover {
     color: var(--ink);
     border-color: var(--ink);
-  }
-  .foot {
-    border-top: 1px solid var(--border);
-    padding: 1.5rem;
-    background: var(--surface);
-  }
-  .foot-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    font-size: 0.8rem;
-    color: var(--ink-soft);
-  }
-  .foot-inner a:first-child {
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .foot-inner a:first-child:hover {
-    color: var(--primary);
-  }
-  @media (max-width: 640px) {
-    .topbar nav {
-      display: none;
-    }
   }
 </style>

@@ -118,6 +118,11 @@ button{ font-family:var(--font-body); cursor:pointer; color:inherit; }
 }
 .sec-title .dot{ color: var(--primary); }
 .sec-sub{ color: var(--ink-soft); font-size: 0.95rem; line-height: 1.65; max-width: 600px; margin-top: 0.7rem; }
+.sec-sub .sec-link{
+  display: inline-block; margin-top: 0.6rem; font-weight: 800;
+  color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 0.1rem;
+}
+.sec-sub .sec-link:hover{ color: var(--ink); border-color: var(--ink); }
 input::placeholder, textarea::placeholder { color: var(--placeholder); opacity: 1; }
 
 .eyebrow{

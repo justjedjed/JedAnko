@@ -1,4 +1,6 @@
 <script lang="ts">
+  import BlogTopbar from '$lib/components/BlogTopbar.svelte';
+  import BlogFooter from '$lib/components/BlogFooter.svelte';
   import { siteUrl } from '$lib/posts';
 
   let { data } = $props();
@@ -6,6 +8,45 @@
   const prev = $derived(data.prev);
   const next = $derived(data.next);
   const url = $derived(`${siteUrl}/blog/${data.post.slug}`);
+
+  // Add copy buttons to code blocks (runs on mount + when switching posts).
+  $effect(() => {
+    const slug = post.slug; // track post changes
+    const blocks = document.querySelectorAll('.post-body pre');
+    blocks.forEach((pre) => {
+      const el = pre as HTMLElement;
+      if (el.parentElement?.classList.contains('code-wrap')) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'code-wrap';
+      el.replaceWith(wrap);
+      wrap.append(el);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code to clipboard');
+      btn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(el.innerText);
+        } catch {
+          const ta = document.createElement('textarea');
+          ta.value = el.innerText;
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+          } catch {
+            // Clipboard unavailable.
+          } finally {
+            ta.remove();
+          }
+        }
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = 'Copy'), 1600);
+      };
+      wrap.append(btn);
+    });
+  });
 </script>
 
 <svelte:head>
@@ -54,17 +95,12 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="topbar">
-  <div class="section-inner topbar-inner">
-    <a href="/" class="brandlink" aria-label="Back to portfolio">
-      <span aria-hidden="true">←</span> Jade Angco
-    </a>
-    <nav aria-label="Sections">
-      <a href="/blog">All posts</a>
-      <a href="/#contact">Contact</a>
-    </nav>
-  </div>
-</header>
+<BlogTopbar
+  links={[
+    { label: 'All posts', href: '/blog' },
+    { label: 'Contact', href: '/#contact' },
+  ]}
+/>
 
 <main id="main">
   <article class="section">
@@ -115,52 +151,9 @@
   </article>
 </main>
 
-<footer class="foot">
-  <div class="section-inner foot-inner">
-    <a href="/blog">← All posts</a>
-    <span>© 2026 Jade Jabagat Angco</span>
-  </div>
-</footer>
+<BlogFooter backHref="/blog" backLabel="← All posts" />
 
 <style>
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: var(--nav-bg);
-    backdrop-filter: blur(16px) saturate(1.3);
-    border-bottom: 1px solid var(--border);
-  }
-  .topbar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 0.85rem;
-    padding-bottom: 0.85rem;
-  }
-  .brandlink {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-  .brandlink:hover {
-    color: var(--primary);
-  }
-  .topbar nav {
-    display: flex;
-    gap: 1.2rem;
-  }
-  .topbar nav a {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-  }
-  .topbar nav a:hover {
-    color: var(--primary);
-  }
   .article-wrap {
     max-width: 760px;
   }
@@ -267,6 +260,33 @@
     font-size: 0.82rem;
     line-height: 1.6;
   }
+  .post-body :global(.code-wrap) {
+    position: relative;
+    margin: 0 0 1.25rem;
+  }
+  .post-body :global(.code-wrap pre) {
+    margin: 0;
+  }
+  .post-body :global(.copy-btn) {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    font-family: var(--font-body);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+  }
+  .post-body :global(.copy-btn:hover) {
+    color: var(--primary);
+    border-color: var(--primary);
+  }
   .cta {
     display: flex;
     align-items: center;
@@ -322,27 +342,6 @@
   }
   .pager a:last-child {
     text-align: right;
-  }
-  .foot {
-    border-top: 1px solid var(--border);
-    padding: 1.5rem;
-    background: var(--surface);
-  }
-  .foot-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    font-size: 0.8rem;
-    color: var(--ink-soft);
-  }
-  .foot-inner a:first-child {
-    font-weight: 700;
-    color: var(--ink);
-  }
-  .foot-inner a:first-child:hover {
-    color: var(--primary);
   }
   @media (max-width: 560px) {
     .pager {
