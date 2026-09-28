@@ -1,0 +1,9 @@
+# Render Static Site blueprint for the portfolio.
+# Connect this repo in the Render Dashboard via "New +" -> "Blueprint",
+# or keep manual deploys — this file only takes effect with Blueprints.
+services:
+  - type: web
+    name: jadeangco-portfolio
+    env: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./build

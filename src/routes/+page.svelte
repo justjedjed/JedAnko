@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import emailjs from "@emailjs/browser";
   import type { Component } from "svelte";
-  type Skill = { name: string; level: string; pct: number };
+  type Skill = { name: string; level: string };
   type SkillGroup = { title: string; icon: Component; items: Skill[] };
   type Project = {
     title: string;
@@ -12,6 +12,9 @@
     tags: string[];
     image: string;
     url?: string;
+    year: string;
+    role: string;
+    highlights: string[];
   };
   type Hosted = {
     title: string;
@@ -43,12 +46,6 @@
     BadgeCheck,
   } from "@lucide/svelte";
 
-  const stats = [
-    { value: "7", label: "Projects built" },
-    { value: "5", label: "Live sites" },
-    { value: "4+", label: "Clients served" },
-    { value: "∞", label: "Experiments" },
-  ];
   const aboutCards = [
     {
       title: "Detail Obsessed",
@@ -93,39 +90,39 @@
       title: "Frontend",
       icon: LayoutGrid,
       items: [
-        { name: "SvelteKit", level: "Intermediate", pct: 65 },
-        { name: "Nuxt / Vue.js", level: "Intermediate", pct: 60 },
-        { name: "TailwindCSS", level: "Expert", pct: 95 },
-        { name: "DaisyUI", level: "Expert", pct: 90 },
-        { name: "TypeScript", level: "Intermediate", pct: 60 },
+        { name: "SvelteKit", level: "Intermediate" },
+        { name: "Nuxt / Vue.js", level: "Intermediate" },
+        { name: "TailwindCSS", level: "Expert" },
+        { name: "DaisyUI", level: "Expert" },
+        { name: "TypeScript", level: "Intermediate" },
       ],
     },
     {
       title: "Backend",
       icon: Server,
       items: [
-        { name: "CodeIgniter", level: "Intermediate", pct: 65 },
-        { name: "Hono", level: "Beginner", pct: 30 },
-        { name: "Firebase", level: "Intermediate", pct: 65 },
+        { name: "CodeIgniter", level: "Intermediate" },
+        { name: "Hono", level: "Familiar" },
+        { name: "Firebase", level: "Intermediate" },
       ],
     },
     {
       title: "Database",
       icon: Database,
       items: [
-        { name: "MySQL", level: "Intermediate", pct: 65 },
-        { name: "MongoDB", level: "Intermediate", pct: 55 },
+        { name: "MySQL", level: "Intermediate" },
+        { name: "MongoDB", level: "Intermediate" },
       ],
     },
     {
       title: "Tools & DevOps",
       icon: Wrench,
       items: [
-        { name: "Git & GitHub", level: "Advanced", pct: 85 },
-        { name: "Vercel", level: "Advanced", pct: 85 },
-        { name: "Render", level: "Intermediate", pct: 60 },
-        { name: "Docker", level: "Beginner", pct: 30 },
-        { name: "Figma", level: "Intermediate", pct: 60 },
+        { name: "Git & GitHub", level: "Advanced" },
+        { name: "Vercel", level: "Advanced" },
+        { name: "Render", level: "Intermediate" },
+        { name: "Docker", level: "Familiar" },
+        { name: "Figma", level: "Intermediate" },
       ],
     },
   ];
@@ -134,33 +131,65 @@
       title: "Elnido Hideaway",
       kind: "Tourism Website",
       status: "Completed",
-      desc: "Showcasing El Nido’s turquoise islands — destination cards, guides & immersive galleries.",
-      tags: ["Nuxt", "TailwindCSS"],
-      image: "/Elnido1.jpeg",
+      desc: "Showcasing El Nido's turquoise islands — destination cards, guides & immersive galleries.",
+      tags: ["Nuxt", "TailwindCSS", "Responsive", "SEO"],
+      image: "/Elnido1.webp",
+      year: "2024",
+      role: "Design & Frontend",
+      highlights: [
+        "Destination cards with imagery, ratings & quick facts",
+        "Travel guides plus immersive photo galleries",
+        "Mobile-first responsive layout with fast image loading",
+        "SEO-friendly routing and meta structure",
+      ],
     },
     {
       title: "NutriGourmet",
       kind: "Food Blog",
       status: "Completed",
       desc: "Recipe publishing with rich cards, categories & editorial layout that tastes as good as it looks.",
-      tags: ["CodeIgniter", "TailwindCSS"],
-      image: "/Nutrigourment1.jpeg",
+      tags: ["CodeIgniter", "TailwindCSS", "MySQL", "CRUD"],
+      image: "/Nutrigourment1.webp",
+      year: "2024",
+      role: "Full-Stack Build",
+      highlights: [
+        "Recipe publishing with categories and rich cards",
+        "Admin CRUD for recipes, categories and featured posts",
+        "Editorial reading layout optimized for mobile",
+        "Search-friendly slugs and clean URLs",
+      ],
     },
     {
       title: "Student Wellness",
       kind: "Wellness Web App",
       status: "Completed",
       desc: "Mental-health monitoring — Random Forest predictions, editable profiles & admin analytics.",
-      tags: ["Flutter", "MySQL"],
-      image: "/MentalHealth.jpeg",
+      tags: ["Flutter", "MySQL", "Python", "Random Forest"],
+      image: "/MentalHealth.webp",
+      year: "2025",
+      role: "Frontend & Data Integration",
+      highlights: [
+        "Wellness check-ins with Random Forest risk prediction",
+        "Editable student profiles plus history tracking",
+        "Admin dashboard with trends and analytics",
+        "Privacy-conscious UI for sensitive data",
+      ],
     },
     {
       title: "TravelHive",
       kind: "Tourism Mockup",
       status: "Completed",
       desc: "Surigao del Sur explorations — itineraries, coastal cards & local highlights.",
-      tags: ["Nuxt", "TailwindCSS"],
-      image: "/TravelHive.png",
+      tags: ["Nuxt", "TailwindCSS", "UI Mockup", "Responsive"],
+      image: "/TravelHive.webp",
+      year: "2024",
+      role: "Design & Frontend",
+      highlights: [
+        "Curated itineraries for Surigao del Sur spots",
+        "Coastal destination cards and local highlights",
+        "High-fidelity mockup turned into working UI",
+        "Reusable card and section component system",
+      ],
     },
     {
       title: "Parinig",
@@ -168,8 +197,16 @@
       status: "In Development",
       desc: "Whisper freely — no names, no pressure. Real thoughts, real-time, reimagined.",
       tags: ["Svelte", "Firebase", "DaisyUI"],
-      image: "/parinig.jpeg",
+      image: "/parinig.webp",
       url: "https://parinig.vercel.app/",
+      year: "2025",
+      role: "Design & Frontend",
+      highlights: [
+        "Anonymous real-time posting with Firebase",
+        "No-signup UX focused on safety and simplicity",
+        "Live feed with moderation-friendly structure",
+        "PWA-ready Svelte plus DaisyUI interface",
+      ],
     },
     {
       title: "Reziofy",
@@ -177,8 +214,16 @@
       status: "In Development",
       desc: "Polished resumes in minutes — smart templates, live preview & instant PDF.",
       tags: ["Svelte", "Firebase", "DaisyUI"],
-      image: "/reziofy.png",
+      image: "/reziofy.webp",
       url: "https://reziofy.web.app/",
+      year: "2025",
+      role: "Design & Frontend",
+      highlights: [
+        "Smart resume templates with live preview",
+        "Shareable public link plus instant PDF export",
+        "Firebase auth and cloud saving",
+        "ATS-friendly structure and typography",
+      ],
     },
   ];
   const filters = ["All", "Completed", "In Development"];
@@ -193,7 +238,7 @@
       title: "MM Group of Companies",
       role: "DevOps & Hosting",
       desc: "The umbrella holding every MM venture — hotel, building, restobar & corporation. A unified digital front for the entire group.",
-      tags: ["HTML/CSS"],
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
       image: "/mmcompanies.jpeg",
       status: "Live",
       url: "https://mmgroupcompanies.com/",
@@ -202,8 +247,8 @@
       title: "MM Hotel Tandag",
       role: "DevOps & Hosting",
       desc: "Full hotel experience — rooms, coffee lounge, restobar & banquet gallery.",
-      tags: ["HTML/CSS"],
-      image: "/mmhotel.png",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/mmhotel.webp",
       status: "Live",
       url: "https://mmhoteltandag.mmgroupcompanies.com/",
     },
@@ -211,8 +256,8 @@
       title: "MM Building",
       role: "DevOps & Hosting",
       desc: "Commercial + residential showcase — pool, elevator & event lighting.",
-      tags: ["HTML/CSS"],
-      image: "/mmbuilding.png",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/mmbuilding.webp",
       status: "Live",
       url: "https://mmcommercialbuilding.mmgroupcompanies.com/",
     },
@@ -220,21 +265,53 @@
       title: "Michaela's Arabic Restobar",
       role: "DevOps & Hosting",
       desc: "Middle-Eastern & Asian flavors — menu, story & contact crafted warmly.",
-      tags: ["HTML/CSS"],
-      image: "/restobar.png",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/restobar.webp",
       status: "Live",
       url: "https://michaelasarabicrestobar.mmgroupcompanies.com/",
     },
     {
       title: "'M Debt Corporation",
       role: "DevOps & Hosting",
-      desc: "Corporate site for Caraga’s debt-management specialists — trust, built digitally.",
-      tags: ["HTML/CSS"],
-      image: "/mdebt.png",
+      desc: "Corporate site for Caraga's debt-management specialists — trust, built digitally.",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/mdebt.webp",
       status: "Live",
       url: "https://mdebtcorporation.mmgroupcompanies.com/",
     },
   ];
+  let liveStatus = $state<Record<string, "checking" | "online" | "offline">>({});
+  let liveLatency = $state<Record<string, number>>({});
+  let selectedProject = $state<Project | null>(null);
+  function openProject(p: Project) {
+    selectedProject = p;
+    document.body.style.overflow = "hidden";
+  }
+  function closeProject() {
+    selectedProject = null;
+    document.body.style.overflow = "";
+  }
+  async function checkSite(url: string) {
+    liveStatus[url] = "checking";
+    const started = performance.now();
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 8000);
+      await fetch(url, { mode: "no-cors", cache: "no-store", signal: ctrl.signal });
+      clearTimeout(t);
+      liveStatus[url] = "online";
+      liveLatency[url] = Math.round(performance.now() - started);
+    } catch {
+      liveStatus[url] = "offline";
+    }
+  }
+  const liveCount = $derived(hosted.filter((h) => h.status === "Live").length);
+  const stats = $derived([
+    { value: String(projects.length), label: "Projects built" },
+    { value: String(liveCount), label: "Live sites" },
+    { value: "4+", label: "Clients served" },
+    { value: String(aboutTags.length), label: "Tech & tools" },
+  ]);
   const tickerItems = [
     "SvelteKit",
     "Vue.js",
@@ -379,7 +456,15 @@
     const onScroll = () => (scrolled = window.scrollY > 16);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    hosted.forEach((h) => checkSite(h.url));
+    const uptimeTimer = setInterval(
+      () => hosted.forEach((h) => checkSite(h.url)),
+      60000,
+    );
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearInterval(uptimeTimer);
+    };
   });
   function toggleTheme() {
     theme = theme === "dark" ? "light" : "dark";
@@ -392,7 +477,7 @@
   <title>Jade Angco — Front-End Developer • SvelteKit & Vue</title>
   <meta
     name="description"
-    content="Male Front-End Developer specializing in SvelteKit, Vue.js, and Nuxt. Building responsive, visually polished web interfaces with modern technologies."
+    content="Jade Angco — Front-End Developer specializing in SvelteKit, Vue.js, and Nuxt. Building fast, responsive, visually polished web interfaces. Based in Bislig City, Surigao del Sur, Philippines — available for remote freelance worldwide."
   />
   <meta
     name="keywords"
@@ -415,9 +500,11 @@
 			"description": "Male Front-End Developer specializing in SvelteKit, Vue.js, and modern web technologies. Building fast, responsive interfaces with clean code.",
 			"address": {
 				"@type": "PostalAddress",
+				"streetAddress": "Purok 4 Dela Silva Street, Poblacion",
 				"addressLocality": "Bislig City",
 				"addressRegion": "Surigao del Sur",
-				"addressCountry": "Philippines"
+				"postalCode": "8311",
+				"addressCountry": "PH"
 			},
 			"email": "jedboyjabagat@gmail.com",
 			"alumniOf": {
@@ -447,11 +534,29 @@
 		}
 		</script>
 	`}
+  {@html `
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "WebSite",
+			"name": "Jade Angco Portfolio",
+			"url": "https://jadeangco-portfolio.onrender.com/",
+			"inLanguage": "en",
+			"author": {
+				"@type": "Person",
+				"name": "Jade Jabagat Angco"
+			}
+		}
+		</script>
+	`}
 </svelte:head>
 
 <svelte:window
   onkeydown={(e) => {
-    if (e.key === "Escape") menuOpen = false;
+    if (e.key === "Escape") {
+      menuOpen = false;
+      closeProject();
+    }
   }}
 />
 
@@ -461,7 +566,6 @@
 <header class="mast" class:scrolled>
   <div class="section-inner mast-inner">
     <a href="#main" class="brand">
-      <span class="brand-mark" aria-hidden="true">JA</span>
       <span class="brand-text">
         <strong>Jade Angco</strong>
         <span>Front-End Developer</span>
@@ -537,11 +641,11 @@
   <section class="section hero">
     <div class="section-inner hero-grid">
       <div class="hero-copy">
-        <p class="status-row">
+        <p class="status-row" title="Purok 4 Dela Silva Street, Poblacion, Bislig City, Surigao del Sur 8311, Philippines">
           <span class="pulse" aria-hidden="true"></span>
           <span>Available for work</span>
           <span class="status-sep" aria-hidden="true">/</span>
-          <span>Bislig City, PH — Remote worldwide</span>
+          <span>Poblacion, Bislig City, PH — Remote worldwide</span>
         </p>
         <h1 class="hero-title">
           Interfaces<br />with intent<span class="dot">.</span>
@@ -591,13 +695,6 @@
             class="soc"
             aria-label="Email"
             title="Email">Email</a
-          >
-          <a
-            href="https://reziofy.web.app/jadeangco?type=resume"
-            class="soc"
-            aria-label="Resume"
-            title="Resume"
-            onclick={trackResume}>Resume</a
           >
         </div>
       </div>
@@ -730,19 +827,14 @@
               <span class="chip">{g.items.length} skills</span>
             </div>
             <ul>
-              {#each g.items as it}
-                <li>
-                  <div class="meter-row">
-                    <span class="meter-name">{it.name}</span>
-                    <span class="meter-level">{it.level}</span>
-                  </div>
-                  <div
-                    class="meter"
-                    role="img"
-                    aria-label={`${it.name}: ${it.pct} percent`}
-                  >
-                    <div class="meter-fill" style={`width:${it.pct}%`}></div>
-                  </div>
+              {#each g.items as it, j}
+                <li
+                  class="meter-row"
+                  class:meter-first={j === 0}
+                  class:meter-last={j === g.items.length - 1}
+                >
+                  <span class="meter-name">{it.name}</span>
+                  <span class="meter-level">{it.level}</span>
                 </li>
               {/each}
             </ul>
@@ -774,72 +866,168 @@
       <div class="work-list">
         {#each filteredProjects as p, i}
           <article class="work-row">
-            {#if p.url}
-              <a
-                class="work-media"
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Open ${p.title}`}
+            <div
+              class="work-media"
+              role="button"
+              tabindex="0"
+              aria-label={`View details for ${p.title}`}
+              onclick={() => openProject(p)}
+              onkeydown={(e) => {
+                if (e.key === "Enter" || e.key === " ") openProject(p);
+              }}
+            >
+              <img
+                src={p.image}
+                alt={`${p.title} — ${p.kind} preview`}
+                loading="lazy"
+              />
+              <span
+                class="chip"
+                class:live={p.status === "Completed"}
+                class:dev={p.status !== "Completed"}
               >
-                <img src={p.image} alt={p.title} loading="lazy" />
-                <span
-                  class="chip"
-                  class:live={p.status === "Completed"}
-                  class:dev={p.status !== "Completed"}
-                >
-                  {p.status}
-                </span>
-                <span class="work-open" aria-hidden="true"
-                  ><ArrowUpRight size={17} strokeWidth={2.5} /></span
-                >
-              </a>
-            {:else}
-              <div class="work-media">
-                <img src={p.image} alt={p.title} loading="lazy" />
-                <span
-                  class="chip"
-                  class:live={p.status === "Completed"}
-                  class:dev={p.status !== "Completed"}
-                >
-                  {p.status}
-                </span>
-              </div>
-            {/if}
+                {p.status}
+              </span>
+              <span class="work-open" aria-hidden="true"
+                ><ArrowUpRight size={17} strokeWidth={2.5} /></span
+              >
+            </div>
             <div class="work-body">
               <p class="work-meta">
                 <span class="work-index">{String(i + 1).padStart(2, "0")}</span>
-                <span class="work-kind">{p.kind}</span>
+                <span class="work-kind">{p.kind} · {p.year}</span>
               </p>
               <h3>{p.title}</h3>
               <p class="work-desc">{p.desc}</p>
               <div class="tag-row">
                 {#each p.tags as t}<span class="tag">{t}</span>{/each}
               </div>
-              {#if p.url}
-                <a
-                  class="text-link"
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <div class="work-links">
+                <button
+                  type="button"
+                  class="text-link as-button"
+                  onclick={() => openProject(p)}
                 >
-                  Visit site
-                  <span aria-hidden="true"
-                    ><ArrowUpRight size={14} strokeWidth={2.5} /></span
-                  >
-                </a>
-              {:else}
-                <a class="text-link" href="#contact">
-                  Case study on request
+                  View details
                   <span aria-hidden="true"
                     ><ArrowRight size={14} strokeWidth={2.5} /></span
                   >
-                </a>
-              {/if}
+                </button>
+                {#if p.url}
+                  <a
+                    class="text-link"
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onclick={(e) => e.stopPropagation()}
+                  >
+                    Visit site
+                    <span aria-hidden="true"
+                      ><ArrowUpRight size={14} strokeWidth={2.5} /></span
+                    >
+                  </a>
+                {:else}
+                  <a
+                    class="text-link muted"
+                    href="#contact"
+                    title="Ask for a walkthrough or source access"
+                  >
+                    Request demo
+                    <span aria-hidden="true"
+                      ><ArrowRight size={14} strokeWidth={2.5} /></span
+                    >
+                  </a>
+                {/if}
+              </div>
             </div>
           </article>
         {/each}
       </div>
+      {#if selectedProject}
+        <div
+          class="modal-backdrop"
+          role="presentation"
+          onclick={closeProject}
+          onkeydown={(e) => {
+            if (e.key === "Escape" || e.key === "Enter") closeProject();
+          }}
+        >
+          <div
+            class="modal-card"
+            role="dialog"
+            tabindex="-1"
+            aria-modal="true"
+            aria-label={`${selectedProject.title} details`}
+            onclick={(e) => e.stopPropagation()}
+            onkeydown={(e) => e.stopPropagation()}
+          >
+            <div class="modal-media">
+              <img
+                src={selectedProject.image}
+                alt={`${selectedProject.title} — ${selectedProject.kind} preview`}
+              />
+              <button
+                type="button"
+                class="modal-close"
+                onclick={closeProject}
+                aria-label="Close details"
+              >
+                <span aria-hidden="true"
+                  ><X size={16} strokeWidth={2.5} /></span
+                >
+              </button>
+              <span
+                class="chip modal-status"
+                class:live={selectedProject.status === "Completed"}
+                class:dev={selectedProject.status !== "Completed"}
+              >
+                {selectedProject.status}
+              </span>
+            </div>
+            <div class="modal-body">
+              <p class="work-meta">
+                <span class="work-kind"
+                  >{selectedProject.kind} · {selectedProject.year} · {selectedProject.role}</span
+                >
+              </p>
+              <h3>{selectedProject.title}</h3>
+              <p class="work-desc">{selectedProject.desc}</p>
+              <h4 class="modal-sub">Key highlights</h4>
+              <ul class="modal-list">
+                {#each selectedProject.highlights as hl}<li>{hl}</li>{/each}
+              </ul>
+              <div class="tag-row">
+                {#each selectedProject.tags as t}<span class="tag">{t}</span>{/each}
+              </div>
+              <div class="modal-cta">
+                {#if selectedProject.url}
+                  <a
+                    class="btn btn-primary btn-sm"
+                    href={selectedProject.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visit live site
+                    <span class="btn-icon" aria-hidden="true"
+                      ><ArrowUpRight size={14} strokeWidth={2.5} /></span
+                    >
+                  </a>
+                {:else}
+                  <span class="modal-note"
+                    >Demo available on request — source walkthrough via
+                    call.</span
+                  >
+                {/if}
+                <a
+                  class="btn btn-ghost btn-sm"
+                  href="#contact"
+                  onclick={closeProject}>Ask about this</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      {/if}
     </div>
   </section>
 
@@ -859,13 +1047,40 @@
         {#each hosted as h, i}
           <li class="site-row">
             <span class="site-num">{String(i + 1).padStart(2, "0")}</span>
-            <img class="site-thumb" src={h.image} alt={h.title} loading="lazy" />
+            <img
+              class="site-thumb"
+              src={h.image}
+              alt={`${h.title} — live client website preview`}
+              loading="lazy"
+            />
             <div class="site-body">
               <div class="site-head">
                 <h3>{h.title}</h3>
-                <span class="chip live">{h.status}</span>
+                {#if liveStatus[h.url] === "offline"}
+                  <span
+                    class="chip offline"
+                    title="Not responding — checked just now in your browser"
+                    >○ Offline</span
+                  >
+                {:else if liveStatus[h.url] === "online"}
+                  <span
+                    class="chip live"
+                    title={liveLatency[h.url]
+                      ? `Responding in ${liveLatency[h.url]}ms — re-checked every 60s in your browser`
+                      : "Responding now — checked in your browser"}
+                    >● Live{liveLatency[h.url]
+                      ? ` · ${liveLatency[h.url]}ms`
+                      : ""}</span
+                  >
+                {:else}
+                  <span class="chip checking" title="Checking live reachability…"
+                    >○ Checking…</span
+                  >
+                {/if}
               </div>
-              <p class="site-role">{h.role}</p>
+              <p class="site-role">
+                {h.role} · Nginx + Cloudflare Tunnel
+              </p>
               <p class="site-desc">{h.desc}</p>
               <div class="tag-row">
                 {#each h.tags as t}<span class="tag">{t}</span>{/each}
@@ -956,7 +1171,16 @@
           </a>
           <div class="channel static">
             <span class="channel-label">Location</span>
-            <strong>Bislig City, Surigao del Sur, Philippines</strong>
+            <strong
+              >Purok 4 Dela Silva St., Poblacion, Bislig City, Surigao del
+              Sur 8311, Philippines</strong
+            >
+            <a
+              class="map-link"
+              href="https://www.google.com/maps/search/?api=1&query=Purok+4+Dela+Silva+Street+Poblacion+Bislig+City+Surigao+del+Sur+8311"
+              target="_blank"
+              rel="noopener">View on map ↗</a
+            >
           </div>
         </aside>
         <form class="contact-form" onsubmit={handleSubmit}>
@@ -1045,11 +1269,11 @@
     <div class="foot-row">
       <span class="foot-brand">&lt;JA/&gt; <span>2026</span></span>
       <span class="foot-mid"
-        >Crafted in Bislig · <span class="avail">● Available for new work</span
+        >Crafted in Poblacion, Bislig City · <span class="avail">● Available for new work</span
         ></span
       >
       <span class="foot-legal"
-        >© 2026 Jade Jabagat Angco — Designed & built in Bislig City, PH</span
+        >© 2026 Jade Jabagat Angco — Designed & built in Poblacion, Bislig City, PH</span
       >
     </div>
   </div>
@@ -1089,20 +1313,6 @@
     display: flex;
     align-items: center;
     gap: 0.65rem;
-  }
-  .brand-mark {
-    width: 38px;
-    height: 38px;
-    background: var(--primary);
-    color: var(--on-primary);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.04em;
-    border-radius: 8px;
   }
   .brand-text {
     display: flex;
@@ -1591,13 +1801,21 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
   }
   .meter-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.45rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .meter-first {
+    padding-top: 0;
+  }
+  .meter-last {
+    border-bottom: none;
+    padding-bottom: 0;
   }
   .meter-name {
     font-size: 0.9rem;
@@ -1609,18 +1827,10 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--primary);
-  }
-  .meter {
-    height: 6px;
+    border: 1px solid var(--border-strong);
     border-radius: 999px;
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .meter-fill {
-    height: 100%;
-    background: var(--primary);
-    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    white-space: nowrap;
   }
 
   .filters {
@@ -1776,6 +1986,158 @@
   .text-link:hover {
     color: var(--ink);
     border-color: var(--ink);
+  }
+  .work-media {
+    cursor: pointer;
+  }
+  .work-media:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+  .work-links {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+  .text-link.as-button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid var(--primary);
+    border-radius: 0;
+    padding: 0 0 0.15rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .text-link.muted {
+    color: var(--ink-faint);
+    border-color: var(--border-strong);
+  }
+  .chip.checking {
+    background: var(--surface-raised);
+    color: var(--ink-soft);
+    border: 1px solid var(--border-strong);
+  }
+  .chip.offline {
+    background: #3a3a3a;
+    color: #ffd7d7;
+    border: 1px solid #6b4444;
+  }
+  .map-link {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--on-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-top: 0.35rem;
+    display: inline-block;
+  }
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-card {
+    width: min(580px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-heavy);
+    color: var(--ink);
+  }
+  .modal-media {
+    position: relative;
+    height: 230px;
+    overflow: hidden;
+    background: var(--surface-raised);
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .modal-status {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.7rem;
+  }
+  .modal-close {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.62);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .modal-close:hover {
+    background: rgba(0, 0, 0, 0.85);
+  }
+  .modal-body {
+    padding: 1.25rem 1.35rem 1.4rem;
+  }
+  .modal-body h3 {
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    margin-top: 0.35rem;
+  }
+  .modal-sub {
+    margin: 0.9rem 0 0.4rem;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .modal-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.87rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .modal-cta {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 1.1rem;
+  }
+  .modal-note {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    flex: 1;
+    min-width: 200px;
+  }
+  @media (hover: none), (pointer: coarse) {
+    .work-open {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .site-list {
