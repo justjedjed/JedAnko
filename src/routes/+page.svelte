@@ -3,6 +3,7 @@
   import emailjs from "@emailjs/browser";
   import type { Component } from "svelte";
   import { posts as blogPosts } from "$lib/posts";
+  import { watchKonami, fireConfetti } from "$lib/easter";
   type Skill = { name: string; level: string };
   type SkillGroup = { title: string; icon: Component; items: Skill[] };
   type Project = {
@@ -44,6 +45,7 @@
     Mail,
     Check,
     Copy,
+    Gamepad2,
     Menu,
     X,
     BadgeCheck,
@@ -343,6 +345,23 @@
   ];
   // Paste REAL client quotes here — testimonial cards stay hidden until you do.
   const testimonials: { quote: string; name: string; role: string }[] = [];
+  let konamiFound = $state(false);
+  let konamiTimer: ReturnType<typeof setTimeout> | null = null;
+  function celebrateKonami() {
+    fireConfetti();
+    konamiFound = true;
+    if (konamiTimer) clearTimeout(konamiTimer);
+    konamiTimer = setTimeout(() => (konamiFound = false), 12000);
+  }
+  function claimKonami() {
+    konamiFound = false;
+    if (konamiTimer) clearTimeout(konamiTimer);
+    message =
+      "KONAMI cheat code accepted — claiming priority scheduling. Here's what I need:\n\n";
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    // Focus the message box once the scroll lands.
+    setTimeout(() => document.getElementById("cf-message")?.focus(), 700);
+  }
   const navLinks = ["About", "Skills", "Projects", "Live Sites", "Blog", "Contact"];
   const latestPosts = $derived(blogPosts.slice(0, 3));
   const navHref = (link: string) =>
@@ -483,9 +502,17 @@
       () => hosted.forEach((h) => checkSite(h.url)),
       60000,
     );
+    console.log(
+      "%cLooking for a dev who reads consoles? %cjedboyjabagat@gmail.com",
+      "font-weight:bold;color:#e60000;font-size:14px;",
+      "font-size:12px;",
+    );
+    const stopKonami = watchKonami(celebrateKonami);
     return () => {
       window.removeEventListener("scroll", onScroll);
       clearInterval(uptimeTimer);
+      stopKonami();
+      if (konamiTimer) clearTimeout(konamiTimer);
     };
   });
   function toggleTheme() {
@@ -1537,9 +1564,37 @@
       <span class="foot-legal"
         >© 2026 Jade Jabagat Angco — Designed & built in Poblacion, Bislig City, PH</span
       >
+      <span class="konami-hint" title="Psst… try the Konami code">↑↑↓↓←→←→BA</span>
     </div>
   </div>
 </footer>
+
+{#if konamiFound}
+  <div class="konami-wrap" role="presentation">
+    <div class="konami-card" role="status">
+      <button
+        type="button"
+        class="konami-close"
+        onclick={() => (konamiFound = false)}
+        aria-label="Dismiss">✕</button
+      >
+      <span class="konami-icon" aria-hidden="true"
+        ><Gamepad2 size={26} strokeWidth={2} /></span
+      >
+      <p class="konami-kicker">↑↑↓↓←→←→BA accepted</p>
+      <p class="konami-title">You cheat-code like a dev.</p>
+      <p class="konami-sub">
+        Hit <strong>claim</strong> and your message box fills itself with the
+        secret password — instant queue-jump on your project.
+      </p>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm btn-block"
+        onclick={claimKonami}>Claim priority →</button
+      >
+    </div>
+  </div>
+{/if}
 
 <style>
   .topline {
@@ -2368,6 +2423,107 @@
   @media (max-width: 560px) {
     .journey-list {
       grid-template-columns: 1fr;
+    }
+  }
+
+  .konami-hint {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    opacity: 0.45;
+    cursor: help;
+    user-select: none;
+  }
+  .konami-hint:hover {
+    opacity: 1;
+    color: var(--primary);
+  }
+  .konami-wrap {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 120;
+    display: flex;
+    justify-content: center;
+    padding: 0 1rem 1.5rem;
+    pointer-events: none;
+  }
+  .konami-card {
+    position: relative;
+    pointer-events: auto;
+    width: min(400px, 100%);
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-top: 4px solid var(--primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-heavy);
+    padding: 1.5rem 1.5rem 1.4rem;
+    animation: konami-in 0.35s var(--ease-spring);
+  }
+  @keyframes konami-in {
+    from {
+      transform: translateY(20px) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+  .konami-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--ink-faint);
+    font-size: 0.65rem;
+  }
+  .konami-close:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .konami-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--green-tint);
+    border: 1px solid rgba(230, 0, 0, 0.35);
+    color: var(--primary);
+    margin-bottom: 0.6rem;
+  }
+  .konami-kicker {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .konami-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 0.35rem;
+  }
+  .konami-sub {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0.5rem 0 1rem;
+  }
+  .konami-sub strong {
+    color: var(--ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .konami-card {
+      animation: none;
     }
   }
 
