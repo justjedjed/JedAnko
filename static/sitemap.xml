@@ -18,4 +18,34 @@
       <image:title>Portrait of Jade Angco</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://jadeangco-portfolio.onrender.com/blog</loc>
+    <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jadeangco-portfolio.onrender.com/blog/host-multiple-sites-nginx-cloudflare-tunnel</loc>
+    <lastmod>2026-09-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jadeangco-portfolio.onrender.com/blog/deploy-sveltekit-render-static</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jadeangco-portfolio.onrender.com/blog/sveltekit-vs-nuxt</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jadeangco-portfolio.onrender.com/blog/ubuntu-server-cloudflare-tunnel-setup-guide</loc>
+    <lastmod>2026-09-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>

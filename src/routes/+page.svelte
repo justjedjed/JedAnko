@@ -324,7 +324,9 @@
     "Vercel",
     "Open for work",
   ];
-  const navLinks = ["About", "Skills", "Projects", "Live Sites", "Contact"];
+  const navLinks = ["About", "Skills", "Projects", "Live Sites", "Blog", "Contact"];
+  const navHref = (link: string) =>
+    link === "Blog" ? "/blog" : `#${link.toLowerCase().replaceAll(" ", "-")}`;
   let name = $state(""),
     email = $state(""),
     subject = $state(""),
@@ -549,6 +551,79 @@
 		}
 		</script>
 	`}
+  {@html `
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@graph": [
+				{
+					"@type": "FAQPage",
+					"mainEntity": [
+						{
+							"@type": "Question",
+							"name": "What services do you offer?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "Front-end development with SvelteKit, Vue.js, and Nuxt — from Figma to production — plus website hosting and DevOps: Nginx, Cloudflare Tunnel, DNS, SSL, and live uptime monitoring."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "Where are you based, and do you work remotely?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "I'm based in Poblacion, Bislig City, Surigao del Sur, Philippines, and I work with clients remotely worldwide. I typically reply within 24 hours."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "What technologies do you work with?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "SvelteKit, Vue.js and Nuxt, TailwindCSS and DaisyUI, TypeScript, Firebase, MySQL and MongoDB, with back ends in CodeIgniter and Hono — deployed on Vercel, Render, and Cloudflare-backed servers."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "Can you take over or fix my existing website?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "Yes. I currently host and maintain five live client websites — handling DNS, SSL, Nginx, and Cloudflare Tunnel — so migrations, fixes, and ongoing maintenance are part of the job."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "How do we start working together?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "Send a message through the contact form or email describing your project. We'll have a short discovery chat, agree on scope, and I'll give you a clear plan and timeline before any work starts."
+							}
+						}
+					]
+				},
+				{
+					"@type": "ProfessionalService",
+					"name": "Jade Angco — Front-End Development & Hosting",
+					"url": "https://jadeangco-portfolio.onrender.com/",
+					"image": "https://jadeangco-portfolio.onrender.com/og-image.png",
+					"address": {
+						"@type": "PostalAddress",
+						"streetAddress": "Purok 4 Dela Silva Street, Poblacion",
+						"addressLocality": "Bislig City",
+						"addressRegion": "Surigao del Sur",
+						"postalCode": "8311",
+						"addressCountry": "PH"
+					},
+					"areaServed": ["Bislig City, Philippines", "Worldwide (remote)"],
+					"sameAs": [
+						"https://github.com/justjedjed",
+						"https://www.facebook.com/just.jeddd"
+					]
+				}
+			]
+		}
+		</script>
+	`}
 </svelte:head>
 
 <svelte:window
@@ -575,7 +650,7 @@
       <ul class="mast-nav">
         {#each navLinks as link}
           <li>
-            <a href={`#${link.toLowerCase().replaceAll(" ", "-")}`}>
+            <a href={navHref(link)}>
               {link}
             </a>
           </li>
@@ -622,10 +697,7 @@
         <ul>
           {#each navLinks as link}
             <li>
-              <a
-                href={`#${link.toLowerCase().replaceAll(" ", "-")}`}
-                onclick={closeMenu}
-              >
+              <a href={navHref(link)} onclick={closeMenu}>
                 {link}
               </a>
             </li>
@@ -648,7 +720,8 @@
           <span>Poblacion, Bislig City, PH — Remote worldwide</span>
         </p>
         <h1 class="hero-title">
-          Interfaces<br />with intent<span class="dot">.</span>
+          <span class="sr-only">Jade Angco — Front-End Developer: </span
+          >Interfaces<br />with intent<span class="dot">.</span>
         </h1>
         <p class="lede">
           I’m Jade Angco. I build <strong>fast</strong>,
@@ -704,6 +777,7 @@
             src="/Jade.jpg"
             alt="Portrait of Jade Angco"
             fetchpriority="high"
+            decoding="async"
           />
         </div>
         <figcaption class="portrait-cap">
@@ -879,7 +953,7 @@
               <img
                 src={p.image}
                 alt={`${p.title} — ${p.kind} preview`}
-                loading="lazy"
+                loading="lazy" decoding="async"
               />
               <span
                 class="chip"
@@ -965,6 +1039,7 @@
               <img
                 src={selectedProject.image}
                 alt={`${selectedProject.title} — ${selectedProject.kind} preview`}
+                decoding="async"
               />
               <button
                 type="button"
@@ -1051,7 +1126,7 @@
               class="site-thumb"
               src={h.image}
               alt={`${h.title} — live client website preview`}
-              loading="lazy"
+              loading="lazy" decoding="async"
             />
             <div class="site-body">
               <div class="site-head">
@@ -1100,6 +1175,62 @@
           </li>
         {/each}
       </ul>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section rule" id="faq">
+    <div class="section-inner">
+      <div class="sec-top">
+        <div>
+          <h2 class="sec-title">Questions, answered<span class="dot">.</span></h2>
+        </div>
+        <p class="sec-sub">
+          Hiring a front-end developer or need hosting help? Start here.
+        </p>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>What services do you offer?</summary>
+          <p>
+            Front-end development with SvelteKit, Vue.js, and Nuxt — from
+            Figma to production — plus website hosting and DevOps: Nginx,
+            Cloudflare Tunnel, DNS, SSL, and live uptime monitoring.
+          </p>
+        </details>
+        <details>
+          <summary>Where are you based, and do you work remotely?</summary>
+          <p>
+            I’m based in Poblacion, Bislig City, Surigao del Sur,
+            Philippines, and I work with clients remotely worldwide. I
+            typically reply within 24 hours.
+          </p>
+        </details>
+        <details>
+          <summary>What technologies do you work with?</summary>
+          <p>
+            SvelteKit, Vue.js and Nuxt, TailwindCSS and DaisyUI, TypeScript,
+            Firebase, MySQL and MongoDB, with back ends in CodeIgniter and
+            Hono — deployed on Vercel, Render, and Cloudflare-backed servers.
+          </p>
+        </details>
+        <details>
+          <summary>Can you take over or fix my existing website?</summary>
+          <p>
+            Yes. I currently host and maintain five live client websites —
+            handling DNS, SSL, Nginx, and Cloudflare Tunnel — so migrations,
+            fixes, and ongoing maintenance are part of the job.
+          </p>
+        </details>
+        <details>
+          <summary>How do we start working together?</summary>
+          <p>
+            Send a message through the contact form or email describing your
+            project. We’ll have a short discovery chat, agree on scope, and
+            I’ll give you a clear plan and timeline before any work starts.
+          </p>
+        </details>
+      </div>
     </div>
   </section>
 
@@ -1268,6 +1399,7 @@
     <p class="foot-big">Available worldwide<span class="dot">.</span></p>
     <div class="foot-row">
       <span class="foot-brand">&lt;JA/&gt; <span>2026</span></span>
+      <a href="/blog" class="foot-blog">Blog ↗</a>
       <span class="foot-mid"
         >Crafted in Poblacion, Bislig City · <span class="avail">● Available for new work</span
         ></span
@@ -2217,6 +2349,35 @@
     color: var(--on-primary);
   }
 
+  .faq-list {
+    border-top: 1px solid var(--border-strong);
+  }
+  .faq-list details {
+    border-bottom: 1px solid var(--border);
+    padding: 1.05rem 0.25rem;
+  }
+  .faq-list summary {
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    list-style-position: inside;
+  }
+  .faq-list summary::marker {
+    color: var(--primary);
+  }
+  .faq-list summary:hover {
+    color: var(--primary);
+  }
+  .faq-list details p {
+    margin: 0.6rem 0 0.15rem;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    font-size: 0.9rem;
+    max-width: 640px;
+  }
+
   .contact-grid {
     display: grid;
     grid-template-columns: 0.95fr 1.05fr;
@@ -2377,6 +2538,13 @@
   .foot-brand {
     color: var(--ink);
     font-weight: 800;
+  }
+  .foot-blog {
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .foot-blog:hover {
+    color: var(--primary);
   }
   .foot-brand span {
     color: var(--ink-faint);
