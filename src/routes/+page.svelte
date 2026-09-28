@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import emailjs from "@emailjs/browser";
   import type { Component } from "svelte";
+  import { posts as blogPosts } from "$lib/posts";
   type Skill = { name: string; level: string };
   type SkillGroup = { title: string; icon: Component; items: Skill[] };
   type Project = {
@@ -325,6 +326,7 @@
     "Open for work",
   ];
   const navLinks = ["About", "Skills", "Projects", "Live Sites", "Blog", "Contact"];
+  const latestPosts = $derived(blogPosts.slice(0, 3));
   const navHref = (link: string) =>
     link === "Blog" ? "/blog" : `#${link.toLowerCase().replaceAll(" ", "-")}`;
   let name = $state(""),
@@ -914,6 +916,43 @@
             </ul>
           </div>
         {/each}
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section class="section rule" id="writing">
+    <div class="section-inner">
+      <div class="sec-top">
+        <div>
+          <h2 class="sec-title">Latest writing<span class="dot">.</span></h2>
+        </div>
+        <p class="sec-sub">
+          Practical notes from real builds — hosting, SvelteKit, and
+          freelancing.
+        </p>
+      </div>
+      <div class="writing-grid">
+        {#each latestPosts as p}
+          <article class="writing-card">
+            <p class="writing-meta">
+              <time datetime={p.date}>{p.date}</time>
+              <span aria-hidden="true">·</span>
+              <span>{p.readingMins} min read</span>
+            </p>
+            <h3><a href={`/blog/${p.slug}`}>{p.title}</a></h3>
+            <p class="writing-excerpt">{p.excerpt}</p>
+            <a class="text-link" href={`/blog/${p.slug}`}>
+              Read post
+              <span aria-hidden="true"
+                ><ArrowUpRight size={14} strokeWidth={2.5} /></span
+              >
+            </a>
+          </article>
+        {/each}
+      </div>
+      <div class="writing-more">
+        <a class="btn btn-ghost btn-sm" href="/blog">View all posts →</a>
       </div>
     </div>
   </section>
@@ -2102,6 +2141,68 @@
     flex-wrap: wrap;
     margin-top: 0.85rem;
   }
+  .writing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .writing-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    transition:
+      transform 0.2s var(--ease-smooth),
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .writing-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-soft);
+  }
+  .writing-card:hover h3 a {
+    color: var(--primary);
+  }
+  .writing-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .writing-card h3 {
+    font-size: 1.02rem;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+  }
+  .writing-excerpt {
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+  .writing-card .text-link {
+    margin-top: 0.4rem;
+    align-self: flex-start;
+  }
+  .writing-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
   .text-link {
     display: inline-flex;
     align-items: center;
@@ -2580,6 +2681,9 @@
     .work-row {
       grid-template-columns: 1fr;
       gap: 1.1rem;
+    }
+    .writing-grid {
+      grid-template-columns: 1fr;
     }
     .site-row {
       grid-template-columns: auto 1fr auto;
