@@ -16,7 +16,9 @@ const SITE = 'https://jadeangco-portfolio.onrender.com';
 
 function parse(raw: string, path: string): Post {
   const slug = path.split('/').pop()?.replace(/\.md$/, '') ?? 'post';
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  // Normalize CRLF (Windows checkouts) so frontmatter always matches.
+  const text = raw.replace(/\r\n/g, '\n');
+  const match = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) throw new Error(`Missing frontmatter: ${path}`);
   const meta: Record<string, string> = {};
   for (const line of match[1].split('\n')) {
