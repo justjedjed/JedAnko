@@ -3,6 +3,7 @@ title: SvelteKit vs Nuxt after building real sites in both
 excerpt: I built tourism sites in Nuxt and apps in SvelteKit. Here's my honest comparison — and which one I'd pick for your project.
 date: 2026-09-14
 tags: [SvelteKit, Nuxt, Vue.js, Comparison]
+og: og-blog-sveltekit-vs-nuxt.png
 ---
 
 Most framework comparisons are written by people who read the docs. I built production sites in both: tourism websites in **Nuxt** (Elnido Hideaway, TravelHive) and live apps in **Svelte/SvelteKit** (Parinig, Reziofy). Here's what actually differs day to day.

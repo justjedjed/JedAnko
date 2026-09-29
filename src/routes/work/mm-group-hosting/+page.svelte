@@ -1,6 +1,7 @@
 <script lang="ts">
   import BlogTopbar from '$lib/components/BlogTopbar.svelte';
   import BlogFooter from '$lib/components/BlogFooter.svelte';
+  import { setContactIntent } from '$lib/contactIntent';
   import { siteUrl } from '$lib/posts';
 
   const title = 'Case study: hosting 5 business websites on one server — MM Group';
@@ -167,7 +168,16 @@
             accountable person instead of five hosting bills.
           </p>
         </div>
-        <a class="btn btn-primary btn-sm" href="/#contact">Get scoped →</a>
+        <a
+          class="btn btn-primary btn-sm"
+          href="/#contact"
+          onclick={() =>
+            setContactIntent({
+              subject: 'Hosting setup inquiry (via MM Group case study)',
+              message:
+                "Hi Jade! I read your MM Group hosting case study. Here's my current setup:\n\n- Sites:\n- Registrar/DNS:\n- Biggest worry:\n",
+            })}>Get scoped →</a
+        >
       </aside>
     </div>
   </article>

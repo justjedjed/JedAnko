@@ -3,6 +3,7 @@ title: How I host 5 websites on one server with Nginx + Cloudflare Tunnel
 excerpt: One VPS, five live client sites, zero open ports — the architecture I run for every client site, and how to get the full setup done for yours.
 date: 2026-09-28
 tags: [Nginx, Cloudflare Tunnel, DevOps, Hosting]
+og: og-blog-host-multiple-sites-nginx-cloudflare-tunnel.png
 ---
 
 I host five live websites — a hotel, a commercial building, a restobar, a corporation, and their parent company site — on a single server. One VPS bill instead of five. No open ports 80 or 443. Every site shows a live badge on [my portfolio](/#live-sites) proving it's up right now.

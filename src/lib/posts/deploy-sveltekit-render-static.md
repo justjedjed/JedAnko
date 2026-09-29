@@ -3,6 +3,7 @@ title: Deploying a SvelteKit static site on Render
 excerpt: adapter-static, a render.yaml blueprint, and the two gotchas that bite everyone — fallback pages and prerendered routes.
 date: 2026-09-21
 tags: [SvelteKit, Render, Deployment]
+og: og-blog-deploy-sveltekit-render-static.png
 ---
 
 My portfolio is a SvelteKit app served as plain static files on Render. No Node server, no cold starts, free hosting. Here's the full setup — this site is the proof it works.

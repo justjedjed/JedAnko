@@ -3,6 +3,7 @@ title: The 27-part server playbook behind my client hosting (overview)
 excerpt: Static IP to snapshots, tunnels to WAF — everything a single Ubuntu server needs to host client sites safely. The full implementation is a service I deliver, not a tutorial. Here's the map.
 date: 2026-09-29
 tags: [Ubuntu, Nginx, Cloudflare Tunnel, DevOps, Hosting]
+og: og-blog-ubuntu-server-cloudflare-tunnel-setup-guide.png
 ---
 
 Anyone can rent a VPS. Turning one into hosting you'd trust with *paying clients'* websites is a different job — networking, tunnels, certificates, process managers, monitoring, backups, and hardening, all wired together so the box is safe to leave running unattended.

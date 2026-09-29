@@ -1,0 +1,28 @@
+{
+  "name": "Jade Angco — Front-End Developer",
+  "short_name": "Jade Angco",
+  "description": "Front-End Developer (SvelteKit, Vue.js) and website hosting in Bislig City, Philippines — available part-time, remote worldwide.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101012",
+  "theme_color": "#e60000",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

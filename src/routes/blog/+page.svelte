@@ -70,6 +70,10 @@
           freelancing. No fluff, everything tested on this very site.
         </p>
       </div>
+      <div class="blog-bar">
+        <a class="btn btn-ghost btn-sm" href="/blog/rss.xml">Subscribe via RSS ↗</a
+        >
+      </div>
       <ul class="post-list">
         {#each posts as p}
           <li>
@@ -100,6 +104,9 @@
 <style>
   .eyebrow {
     margin-bottom: 0.6rem;
+  }
+  .blog-bar {
+    margin-bottom: 1.25rem;
   }
   .post-list {
     list-style: none;

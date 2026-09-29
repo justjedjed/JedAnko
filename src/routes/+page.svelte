@@ -4,6 +4,7 @@
   import type { Component } from "svelte";
   import { posts as blogPosts } from "$lib/posts";
   import { watchKonami, fireConfetti } from "$lib/easter";
+  import { takeContactIntent } from "$lib/contactIntent";
   type Skill = { name: string; level: string };
   type SkillGroup = { title: string; icon: Component; items: Skill[] };
   type Project = {
@@ -46,6 +47,7 @@
     Check,
     Copy,
     Gamepad2,
+    Briefcase,
     Menu,
     X,
     BadgeCheck,
@@ -487,6 +489,13 @@
   function closeMenu() {
     menuOpen = false;
   }
+  function applyContactIntent() {
+    if (!window.location.hash.startsWith("#contact")) return;
+    const intent = takeContactIntent();
+    if (!intent) return;
+    subject = intent.subject;
+    message = intent.message;
+  }
   onMount(() => {
     const saved = localStorage.getItem("theme") as "dark" | "light" | null;
     const prefersLight = window.matchMedia(
@@ -508,8 +517,11 @@
       "font-size:12px;",
     );
     const stopKonami = watchKonami(celebrateKonami);
+    applyContactIntent();
+    window.addEventListener("hashchange", applyContactIntent);
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("hashchange", applyContactIntent);
       clearInterval(uptimeTimer);
       stopKonami();
       if (konamiTimer) clearTimeout(konamiTimer);
@@ -541,11 +553,23 @@
 			"gender": "Male",
 			"url": "https://jadeangco-portfolio.onrender.com",
 			"image": "https://jadeangco-portfolio.onrender.com/Jade.jpg",
-			"jobTitle": "Front-End Developer",
-			"worksFor": {
-				"@type": "Organization",
-				"name": "Freelance"
-			},
+			"jobTitle": ["Programmer", "Front-End Developer"],
+			"worksFor": [
+				{
+					"@type": "GovernmentOrganization",
+					"name": "Local Government Unit",
+					"address": {
+						"@type": "PostalAddress",
+						"addressLocality": "Bislig City",
+						"addressRegion": "Surigao del Sur",
+						"addressCountry": "PH"
+					}
+				},
+				{
+					"@type": "Organization",
+					"name": "Freelance (part-time)"
+				}
+			],
 			"description": "Male Front-End Developer specializing in SvelteKit, Vue.js, and modern web technologies. Building fast, responsive interfaces with clean code.",
 			"address": {
 				"@type": "PostalAddress",
@@ -653,6 +677,7 @@
 					"name": "Jade Angco — Front-End Development & Hosting",
 					"url": "https://jadeangco-portfolio.onrender.com/",
 					"image": "https://jadeangco-portfolio.onrender.com/og-image.png",
+					"hasMap": "https://maps.app.goo.gl/ad7XWCvsLRW9vebHA",
 					"address": {
 						"@type": "PostalAddress",
 						"streetAddress": "Purok 4 Dela Silva Street, Poblacion",
@@ -897,6 +922,16 @@
             <span>
               <strong>Certified Computer Systems Servicing NCII</strong> — solid
               roots in both hardware & software.
+            </span>
+          </p>
+          <p class="cert work">
+            <span aria-hidden="true"
+              ><Briefcase size={18} strokeWidth={2.25} /></span
+            >
+            <span>
+              Currently a <strong>Programmer</strong> at a Local Government
+              Unit <em>(Contract of Service)</em> — building public-sector
+              systems by day, client work by night.
             </span>
           </p>
           <div class="tag-cloud">
@@ -1388,6 +1423,10 @@
           </p>
         </details>
       </div>
+      <p class="faq-more">
+        Still deciding? <a href="#contact">Describe your project →</a> — I
+        reply within 24 hours.
+      </p>
     </div>
   </section>
 
@@ -1405,6 +1444,36 @@
           open.
         </p>
       </div>
+      <ol class="process-list">
+        <li>
+          <span class="p-step">01</span>
+          <div>
+            <strong>Discover</strong>
+            <p>A short chat about your goals and must-haves.</p>
+          </div>
+        </li>
+        <li>
+          <span class="p-step">02</span>
+          <div>
+            <strong>Scope & plan</strong>
+            <p>Clear scope, timeline, and price — no surprises.</p>
+          </div>
+        </li>
+        <li>
+          <span class="p-step">03</span>
+          <div>
+            <strong>Build</strong>
+            <p>Preview links as it comes together, not promises.</p>
+          </div>
+        </li>
+        <li>
+          <span class="p-step">04</span>
+          <div>
+            <strong>Launch & care</strong>
+            <p>Deployed, monitored, handed over with notes.</p>
+          </div>
+        </li>
+      </ol>
       <div class="contact-grid">
         <aside class="contact-aside">
           <p class="aside-note">
@@ -1465,7 +1534,7 @@
             >
             <a
               class="map-link"
-              href="https://www.google.com/maps/search/?api=1&query=Purok+4+Dela+Silva+Street+Poblacion+Bislig+City+Surigao+del+Sur+8311"
+              href="https://maps.app.goo.gl/ad7XWCvsLRW9vebHA"
               target="_blank"
               rel="noopener">View on map ↗</a
             >
@@ -1504,7 +1573,15 @@
               bind:value={subject}
               placeholder="Project inquiry, collaboration..."
               autocomplete="off"
-            /></label
+              list="subject-suggestions"
+            /><datalist id="subject-suggestions">
+              <option value="Project inquiry — new website"></option>
+              <option value="Hosting setup inquiry"></option>
+              <option value="Fix my website"></option>
+              <option value="Take over my existing site"></option>
+              <option value="Collaboration"></option>
+              <option value="Just saying hi"></option>
+            </datalist></label
           >
           <label for="cf-message"
             ><span>Message *</span><textarea
@@ -2801,6 +2878,64 @@
     line-height: 1.65;
     font-size: 0.9rem;
     max-width: 640px;
+  }
+  .faq-more {
+    margin-top: 1.4rem;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+  .faq-more a {
+    font-weight: 800;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.1rem;
+  }
+  .faq-more a:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .process-list {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+  }
+  .process-list li {
+    display: flex;
+    gap: 0.7rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.9rem 1rem;
+  }
+  .p-step {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  .process-list strong {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+  }
+  .process-list p {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  @media (max-width: 980px) {
+    .process-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .process-list {
+      grid-template-columns: 1fr;
+    }
   }
 
   .contact-grid {

@@ -6,6 +6,8 @@ export interface Post {
   excerpt: string;
   date: string;
   tags: string[];
+  /** Path like /og-blog-slug.png — falls back to the generic card. */
+  ogImage: string;
   html: string;
   readingMins: number;
 }
@@ -28,6 +30,7 @@ function parse(raw: string, path: string): Post {
     title: meta.title ?? slug,
     excerpt: meta.excerpt ?? '',
     date: meta.date ?? '',
+    ogImage: meta.og ? `/${meta.og}` : '/og-image.png',
     tags: (meta.tags ?? '')
       .replace(/^\[|\]$/g, '')
       .split(',')

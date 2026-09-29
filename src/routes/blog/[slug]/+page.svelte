@@ -1,6 +1,7 @@
 <script lang="ts">
   import BlogTopbar from '$lib/components/BlogTopbar.svelte';
   import BlogFooter from '$lib/components/BlogFooter.svelte';
+  import { setContactIntent } from '$lib/contactIntent';
   import { siteUrl } from '$lib/posts';
 
   let { data } = $props();
@@ -61,14 +62,14 @@
   <meta property="og:url" content={url} />
   <meta property="og:title" content={`${post.title} — Jade Angco`} />
   <meta property="og:description" content={post.excerpt} />
-  <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+  <meta property="og:image" content={`${siteUrl}${post.ogImage}`} />
   <meta property="article:published_time" content={post.date} />
   <meta property="article:author" content="Jade Jabagat Angco" />
   {#each post.tags as t}<meta property="article:tag" content={t} />{/each}
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={`${post.title} — Jade Angco`} />
   <meta name="twitter:description" content={post.excerpt} />
-  <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+  <meta name="twitter:image" content={`${siteUrl}${post.ogImage}`} />
   {@html `
 		<script type="application/ld+json">
 		{
@@ -76,7 +77,7 @@
 			"@type": "Article",
 			"headline": ${JSON.stringify(post.title)},
 			"description": ${JSON.stringify(post.excerpt)},
-			"image": "${siteUrl}/og-image.png",
+			"image": "${siteUrl}${post.ogImage}",
 			"datePublished": "${post.date}",
 			"inLanguage": "en",
 			"author": {
@@ -133,7 +134,15 @@
             Cloudflare Tunnel. Reply within 24 hours.
           </p>
         </div>
-        <a class="btn btn-primary btn-sm" href="/#contact">Work with me →</a>
+        <a
+          class="btn btn-primary btn-sm"
+          href="/#contact"
+          onclick={() =>
+            setContactIntent({
+              subject: `Project inquiry (via "${post.title}")`,
+              message: `Hi Jade! I just read your post "${post.title}". Here's what I need:\n\n`,
+            })}>Work with me →</a
+        >
       </aside>
       <nav class="pager" aria-label="More posts">
         {#if prev}
