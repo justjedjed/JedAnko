@@ -92,6 +92,33 @@
 		}
 		</script>
 	`}
+  {@html `
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "BreadcrumbList",
+			"itemListElement": [
+				{
+					"@type": "ListItem",
+					"position": 1,
+					"name": "Home",
+					"item": "${siteUrl}/"
+				},
+				{
+					"@type": "ListItem",
+					"position": 2,
+					"name": "Blog",
+					"item": "${siteUrl}/blog"
+				},
+				{
+					"@type": "ListItem",
+					"position": 3,
+					"name": ${JSON.stringify(post.title)}
+				}
+			]
+		}
+		</script>
+	`}
 </svelte:head>
 
 <a class="skip-link" href="#main">Skip to content</a>

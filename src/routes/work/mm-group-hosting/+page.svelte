@@ -38,13 +38,13 @@
   <meta property="og:url" content={url} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={desc} />
-  <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+  <meta property="og:image" content={`${siteUrl}/og-work-mm-group-hosting.png`} />
   <meta property="article:published_time" content="2026-09-29" />
   <meta property="article:author" content="Jade Jabagat Angco" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={desc} />
-  <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+  <meta name="twitter:image" content={`${siteUrl}/og-work-mm-group-hosting.png`} />
   {@html `
 		<script type="application/ld+json">
 		{
@@ -52,7 +52,7 @@
 			"@type": "Article",
 			"headline": ${JSON.stringify(title)},
 			"description": ${JSON.stringify(desc)},
-			"image": "${siteUrl}/og-image.png",
+			"image": "${siteUrl}/og-work-mm-group-hosting.png",
 			"datePublished": "2026-09-29",
 			"inLanguage": "en",
 			"author": {
@@ -64,6 +64,33 @@
 				"@type": "WebPage",
 				"@id": "${url}"
 			}
+		}
+		</script>
+	`}
+  {@html `
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "BreadcrumbList",
+			"itemListElement": [
+				{
+					"@type": "ListItem",
+					"position": 1,
+					"name": "Home",
+					"item": "${siteUrl}/"
+				},
+				{
+					"@type": "ListItem",
+					"position": 2,
+					"name": "Live Sites",
+					"item": "${siteUrl}/#live-sites"
+				},
+				{
+					"@type": "ListItem",
+					"position": 3,
+					"name": "MM Group hosting case study"
+				}
+			]
 		}
 		</script>
 	`}

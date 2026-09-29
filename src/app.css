@@ -107,7 +107,11 @@ button{ font-family:var(--font-body); cursor:pointer; color:inherit; }
 .wrap{ max-width: var(--maxw); margin: 0 auto; }
 .section{ padding: 4.5rem 1.5rem; position: relative; }
 .section-inner{ max-width: var(--maxw); margin: 0 auto; }
-.section.rule{ border-top: 1px solid var(--border); }
+.section.rule{
+  border-top: 1px solid var(--border);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
 .sec-top{
   display: flex; align-items: flex-end; justify-content: space-between;
   gap: 1.25rem; flex-wrap: wrap; margin-bottom: 2rem;

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import emailjs from "@emailjs/browser";
   import type { Component } from "svelte";
   import { posts as blogPosts } from "$lib/posts";
   import { watchKonami, fireConfetti } from "$lib/easter";
@@ -27,6 +26,8 @@
     desc: string;
     tags: string[];
     image: string;
+    /** Auto-refreshing screenshot URL (falls back to `image` offline). */
+    liveShot?: string;
     status: "Suspended" | "Live";
     url: string;
   };
@@ -251,6 +252,8 @@
       desc: "The umbrella holding every MM venture — hotel, building, restobar & corporation. A unified digital front for the entire group.",
       tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
       image: "/mmcompanies.jpeg",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Fmmgroupcompanies.com%2F?w=400",
       status: "Live",
       url: "https://mmgroupcompanies.com/",
     },
@@ -260,6 +263,8 @@
       desc: "Full hotel experience — rooms, coffee lounge, restobar & banquet gallery.",
       tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
       image: "/mmhotel.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Fmmhoteltandag.mmgroupcompanies.com%2F?w=400",
       status: "Live",
       url: "https://mmhoteltandag.mmgroupcompanies.com/",
     },
@@ -269,6 +274,8 @@
       desc: "Commercial + residential showcase — pool, elevator & event lighting.",
       tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
       image: "/mmbuilding.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Fmmcommercialbuilding.mmgroupcompanies.com%2F?w=400",
       status: "Live",
       url: "https://mmcommercialbuilding.mmgroupcompanies.com/",
     },
@@ -278,6 +285,8 @@
       desc: "Middle-Eastern & Asian flavors — menu, story & contact crafted warmly.",
       tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
       image: "/restobar.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Fmichaelasarabicrestobar.mmgroupcompanies.com%2F?w=400",
       status: "Live",
       url: "https://michaelasarabicrestobar.mmgroupcompanies.com/",
     },
@@ -287,6 +296,8 @@
       desc: "Corporate site for Caraga's debt-management specialists — trust, built digitally.",
       tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
       image: "/mdebt.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Fmdebtcorporation.mmgroupcompanies.com%2F?w=400",
       status: "Live",
       url: "https://mdebtcorporation.mmgroupcompanies.com/",
     },
@@ -303,10 +314,13 @@
     document.body.style.overflow = "";
   }
   /** Prefer the auto-refreshing screenshot; fall back to the static shot. */
-  function shotSrc(p: Project): string {
+  function shotSrc(p: { liveShot?: string; image: string }): string {
     return p.liveShot ?? p.image;
   }
-  function shotFallback(e: Event, p: Project) {
+  function shotFallback(
+    e: Event,
+    p: { liveShot?: string; image: string },
+  ) {
     const img = e.currentTarget as HTMLImageElement;
     if (img.dataset.fbk) return;
     img.dataset.fbk = "1";
@@ -414,6 +428,8 @@
     sendError = false;
     try {
       if (emailJsReady) {
+        // Loaded on demand so the homepage never pays for it otherwise.
+        const { default: emailjs } = await import("@emailjs/browser");
         await emailjs.send(
           EMAILJS_SERVICE_ID,
           EMAILJS_TEMPLATE_ID,
@@ -543,6 +559,51 @@
   <meta
     name="keywords"
     content="Jade Angco, Front-End Developer, Web Developer, SvelteKit, Vue.js, Nuxt, TailwindCSS, DaisyUI, TypeScript, CodeIgniter, Firebase, Bislig City, Surigao del Sur, Philippines, Freelance Developer, UI/UX Developer, Computer Science, Full Stack Developer"
+  />
+  <link rel="canonical" href="https://jadeangco-portfolio.onrender.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://jadeangco-portfolio.onrender.com/" />
+  <meta
+    property="og:title"
+    content="Jade Angco — Front-End Developer • SvelteKit & Vue"
+  />
+  <meta
+    property="og:description"
+    content="Front-End Developer building fast, responsive & visually polished interfaces. Based in Bislig City, Philippines — available part-time, remote worldwide."
+  />
+  <meta
+    property="og:image"
+    content="https://jadeangco-portfolio.onrender.com/og-image.png"
+  />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta
+    property="og:image:alt"
+    content="Jade Angco — Front-End Developer, SvelteKit and Vue"
+  />
+  <meta property="og:site_name" content="Jade Angco Portfolio" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:see_also" content="https://github.com/justjedjed" />
+  <meta
+    property="og:see_also"
+    content="https://www.facebook.com/just.jeddd"
+  />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta
+    name="twitter:title"
+    content="Jade Angco — Front-End Developer • SvelteKit & Vue"
+  />
+  <meta
+    name="twitter:description"
+    content="Front-End Developer building fast, responsive & visually polished interfaces. Based in Bislig City, Philippines — available part-time, remote worldwide."
+  />
+  <meta
+    name="twitter:image"
+    content="https://jadeangco-portfolio.onrender.com/og-image.png"
+  />
+  <meta
+    name="twitter:image:alt"
+    content="Jade Angco — Front-End Developer, SvelteKit and Vue"
   />
   {@html `
 		<script type="application/ld+json">
@@ -1316,9 +1377,10 @@
             <span class="site-num">{String(i + 1).padStart(2, "0")}</span>
             <img
               class="site-thumb"
-              src={h.image}
+              src={shotSrc(h)}
               alt={`${h.title} — live client website preview`}
               loading="lazy" decoding="async"
+              onerror={(e) => shotFallback(e, h)}
             />
             <div class="site-body">
               <div class="site-head">
@@ -2782,7 +2844,7 @@
   }
   .site-row {
     display: grid;
-    grid-template-columns: auto 150px 1fr auto;
+    grid-template-columns: auto 190px 1fr auto;
     gap: 1.25rem;
     align-items: center;
     padding: 1.1rem 0.25rem;
@@ -2799,10 +2861,11 @@
     font-size: 0.85rem;
   }
   .site-thumb {
-    width: 150px;
-    height: 92px;
+    width: 190px;
+    height: 116px;
     object-fit: cover;
-    border-radius: 8px;
+    object-position: top;
+    border-radius: 10px;
     border: 1px solid var(--border-strong);
     display: block;
     background: var(--surface-raised);
@@ -3148,8 +3211,8 @@
       grid-template-columns: auto 1fr auto;
     }
     .site-thumb {
-      width: 64px;
-      height: 64px;
+      width: 84px;
+      height: 84px;
       border-radius: 10px;
     }
   }
