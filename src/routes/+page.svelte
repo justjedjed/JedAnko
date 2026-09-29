@@ -2,7 +2,10 @@
   import { onMount } from "svelte";
   import emailjs from "@emailjs/browser";
   import type { Component } from "svelte";
-  type Skill = { name: string; level: string; pct: number };
+  import { posts as blogPosts } from "$lib/posts";
+  import { watchKonami, fireConfetti } from "$lib/easter";
+  import { takeContactIntent } from "$lib/contactIntent";
+  type Skill = { name: string; level: string };
   type SkillGroup = { title: string; icon: Component; items: Skill[] };
   type Project = {
     title: string;
@@ -11,7 +14,12 @@
     desc: string;
     tags: string[];
     image: string;
+    /** Auto-refreshing screenshot URL (falls back to `image` offline). */
+    liveShot?: string;
     url?: string;
+    year: string;
+    role: string;
+    highlights: string[];
   };
   type Hosted = {
     title: string;
@@ -38,17 +46,13 @@
     Mail,
     Check,
     Copy,
+    Gamepad2,
+    Briefcase,
     Menu,
     X,
     BadgeCheck,
   } from "@lucide/svelte";
 
-  const stats = [
-    { value: "7", label: "Projects built" },
-    { value: "5", label: "Live sites" },
-    { value: "4+", label: "Clients served" },
-    { value: "∞", label: "Experiments" },
-  ];
   const aboutCards = [
     {
       title: "Detail Obsessed",
@@ -93,39 +97,39 @@
       title: "Frontend",
       icon: LayoutGrid,
       items: [
-        { name: "SvelteKit", level: "Intermediate", pct: 65 },
-        { name: "Nuxt / Vue.js", level: "Intermediate", pct: 60 },
-        { name: "TailwindCSS", level: "Expert", pct: 95 },
-        { name: "DaisyUI", level: "Expert", pct: 90 },
-        { name: "TypeScript", level: "Intermediate", pct: 60 },
+        { name: "SvelteKit", level: "Intermediate" },
+        { name: "Nuxt / Vue.js", level: "Intermediate" },
+        { name: "TailwindCSS", level: "Expert" },
+        { name: "DaisyUI", level: "Expert" },
+        { name: "TypeScript", level: "Intermediate" },
       ],
     },
     {
       title: "Backend",
       icon: Server,
       items: [
-        { name: "CodeIgniter", level: "Intermediate", pct: 65 },
-        { name: "Hono", level: "Beginner", pct: 30 },
-        { name: "Firebase", level: "Intermediate", pct: 65 },
+        { name: "CodeIgniter", level: "Intermediate" },
+        { name: "Hono", level: "Familiar" },
+        { name: "Firebase", level: "Intermediate" },
       ],
     },
     {
       title: "Database",
       icon: Database,
       items: [
-        { name: "MySQL", level: "Intermediate", pct: 65 },
-        { name: "MongoDB", level: "Intermediate", pct: 55 },
+        { name: "MySQL", level: "Intermediate" },
+        { name: "MongoDB", level: "Intermediate" },
       ],
     },
     {
       title: "Tools & DevOps",
       icon: Wrench,
       items: [
-        { name: "Git & GitHub", level: "Advanced", pct: 85 },
-        { name: "Vercel", level: "Advanced", pct: 85 },
-        { name: "Render", level: "Intermediate", pct: 60 },
-        { name: "Docker", level: "Beginner", pct: 30 },
-        { name: "Figma", level: "Intermediate", pct: 60 },
+        { name: "Git & GitHub", level: "Advanced" },
+        { name: "Vercel", level: "Advanced" },
+        { name: "Render", level: "Intermediate" },
+        { name: "Docker", level: "Familiar" },
+        { name: "Figma", level: "Intermediate" },
       ],
     },
   ];
@@ -134,33 +138,65 @@
       title: "Elnido Hideaway",
       kind: "Tourism Website",
       status: "Completed",
-      desc: "Showcasing El Nido’s turquoise islands — destination cards, guides & immersive galleries.",
-      tags: ["Nuxt", "TailwindCSS"],
-      image: "/Elnido1.jpeg",
+      desc: "Showcasing El Nido's turquoise islands — destination cards, guides & immersive galleries.",
+      tags: ["Nuxt", "TailwindCSS", "Responsive", "SEO"],
+      image: "/Elnido1.webp",
+      year: "2024",
+      role: "Design & Frontend",
+      highlights: [
+        "Destination cards with imagery, ratings & quick facts",
+        "Travel guides plus immersive photo galleries",
+        "Mobile-first responsive layout with fast image loading",
+        "SEO-friendly routing and meta structure",
+      ],
     },
     {
       title: "NutriGourmet",
       kind: "Food Blog",
       status: "Completed",
       desc: "Recipe publishing with rich cards, categories & editorial layout that tastes as good as it looks.",
-      tags: ["CodeIgniter", "TailwindCSS"],
-      image: "/Nutrigourment1.jpeg",
+      tags: ["CodeIgniter", "TailwindCSS", "MySQL", "CRUD"],
+      image: "/Nutrigourment1.webp",
+      year: "2024",
+      role: "Full-Stack Build",
+      highlights: [
+        "Recipe publishing with categories and rich cards",
+        "Admin CRUD for recipes, categories and featured posts",
+        "Editorial reading layout optimized for mobile",
+        "Search-friendly slugs and clean URLs",
+      ],
     },
     {
       title: "Student Wellness",
       kind: "Wellness Web App",
       status: "Completed",
       desc: "Mental-health monitoring — Random Forest predictions, editable profiles & admin analytics.",
-      tags: ["Flutter", "MySQL"],
-      image: "/MentalHealth.jpeg",
+      tags: ["Flutter", "MySQL", "Python", "Random Forest"],
+      image: "/MentalHealth.webp",
+      year: "2025",
+      role: "Frontend & Data Integration",
+      highlights: [
+        "Wellness check-ins with Random Forest risk prediction",
+        "Editable student profiles plus history tracking",
+        "Admin dashboard with trends and analytics",
+        "Privacy-conscious UI for sensitive data",
+      ],
     },
     {
       title: "TravelHive",
       kind: "Tourism Mockup",
       status: "Completed",
       desc: "Surigao del Sur explorations — itineraries, coastal cards & local highlights.",
-      tags: ["Nuxt", "TailwindCSS"],
-      image: "/TravelHive.png",
+      tags: ["Nuxt", "TailwindCSS", "UI Mockup", "Responsive"],
+      image: "/TravelHive.webp",
+      year: "2024",
+      role: "Design & Frontend",
+      highlights: [
+        "Curated itineraries for Surigao del Sur spots",
+        "Coastal destination cards and local highlights",
+        "High-fidelity mockup turned into working UI",
+        "Reusable card and section component system",
+      ],
     },
     {
       title: "Parinig",
@@ -168,8 +204,18 @@
       status: "In Development",
       desc: "Whisper freely — no names, no pressure. Real thoughts, real-time, reimagined.",
       tags: ["Svelte", "Firebase", "DaisyUI"],
-      image: "/parinig.jpeg",
+      image: "/parinig.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Fparinig.vercel.app?w=800",
       url: "https://parinig.vercel.app/",
+      year: "2025",
+      role: "Design & Frontend",
+      highlights: [
+        "Anonymous real-time posting with Firebase",
+        "No-signup UX focused on safety and simplicity",
+        "Live feed with moderation-friendly structure",
+        "PWA-ready Svelte plus DaisyUI interface",
+      ],
     },
     {
       title: "Reziofy",
@@ -177,8 +223,18 @@
       status: "In Development",
       desc: "Polished resumes in minutes — smart templates, live preview & instant PDF.",
       tags: ["Svelte", "Firebase", "DaisyUI"],
-      image: "/reziofy.png",
+      image: "/reziofy.webp",
+      liveShot:
+        "https://s0.wp.com/mshots/v1/https%3A%2F%2Freziofy.web.app?w=800",
       url: "https://reziofy.web.app/",
+      year: "2025",
+      role: "Design & Frontend",
+      highlights: [
+        "Smart resume templates with live preview",
+        "Shareable public link plus instant PDF export",
+        "Firebase auth and cloud saving",
+        "ATS-friendly structure and typography",
+      ],
     },
   ];
   const filters = ["All", "Completed", "In Development"];
@@ -193,7 +249,7 @@
       title: "MM Group of Companies",
       role: "DevOps & Hosting",
       desc: "The umbrella holding every MM venture — hotel, building, restobar & corporation. A unified digital front for the entire group.",
-      tags: ["HTML/CSS"],
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
       image: "/mmcompanies.jpeg",
       status: "Live",
       url: "https://mmgroupcompanies.com/",
@@ -202,8 +258,8 @@
       title: "MM Hotel Tandag",
       role: "DevOps & Hosting",
       desc: "Full hotel experience — rooms, coffee lounge, restobar & banquet gallery.",
-      tags: ["HTML/CSS"],
-      image: "/mmhotel.png",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/mmhotel.webp",
       status: "Live",
       url: "https://mmhoteltandag.mmgroupcompanies.com/",
     },
@@ -211,8 +267,8 @@
       title: "MM Building",
       role: "DevOps & Hosting",
       desc: "Commercial + residential showcase — pool, elevator & event lighting.",
-      tags: ["HTML/CSS"],
-      image: "/mmbuilding.png",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/mmbuilding.webp",
       status: "Live",
       url: "https://mmcommercialbuilding.mmgroupcompanies.com/",
     },
@@ -220,21 +276,63 @@
       title: "Michaela's Arabic Restobar",
       role: "DevOps & Hosting",
       desc: "Middle-Eastern & Asian flavors — menu, story & contact crafted warmly.",
-      tags: ["HTML/CSS"],
-      image: "/restobar.png",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/restobar.webp",
       status: "Live",
       url: "https://michaelasarabicrestobar.mmgroupcompanies.com/",
     },
     {
       title: "'M Debt Corporation",
       role: "DevOps & Hosting",
-      desc: "Corporate site for Caraga’s debt-management specialists — trust, built digitally.",
-      tags: ["HTML/CSS"],
-      image: "/mdebt.png",
+      desc: "Corporate site for Caraga's debt-management specialists — trust, built digitally.",
+      tags: ["HTML/CSS", "Nginx", "Cloudflare Tunnel", "Cloudflare DNS", "Cloudflare SSL"],
+      image: "/mdebt.webp",
       status: "Live",
       url: "https://mdebtcorporation.mmgroupcompanies.com/",
     },
   ];
+  let liveStatus = $state<Record<string, "checking" | "online" | "offline">>({});
+  let liveLatency = $state<Record<string, number>>({});
+  let selectedProject = $state<Project | null>(null);
+  function openProject(p: Project) {
+    selectedProject = p;
+    document.body.style.overflow = "hidden";
+  }
+  function closeProject() {
+    selectedProject = null;
+    document.body.style.overflow = "";
+  }
+  /** Prefer the auto-refreshing screenshot; fall back to the static shot. */
+  function shotSrc(p: Project): string {
+    return p.liveShot ?? p.image;
+  }
+  function shotFallback(e: Event, p: Project) {
+    const img = e.currentTarget as HTMLImageElement;
+    if (img.dataset.fbk) return;
+    img.dataset.fbk = "1";
+    img.src = p.image;
+  }
+  async function checkSite(url: string) {
+    liveStatus[url] = "checking";
+    const started = performance.now();
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 8000);
+      await fetch(url, { mode: "no-cors", cache: "no-store", signal: ctrl.signal });
+      clearTimeout(t);
+      liveStatus[url] = "online";
+      liveLatency[url] = Math.round(performance.now() - started);
+    } catch {
+      liveStatus[url] = "offline";
+    }
+  }
+  const liveCount = $derived(hosted.filter((h) => h.status === "Live").length);
+  const stats = $derived([
+    { value: String(projects.length), label: "Projects built" },
+    { value: String(liveCount), label: "Live sites" },
+    { value: "4+", label: "Clients served" },
+    { value: String(aboutTags.length), label: "Tech & tools" },
+  ]);
   const tickerItems = [
     "SvelteKit",
     "Vue.js",
@@ -247,7 +345,29 @@
     "Vercel",
     "Open for work",
   ];
-  const navLinks = ["About", "Skills", "Projects", "Live Sites", "Contact"];
+  // Paste REAL client quotes here — testimonial cards stay hidden until you do.
+  const testimonials: { quote: string; name: string; role: string }[] = [];
+  let konamiFound = $state(false);
+  let konamiTimer: ReturnType<typeof setTimeout> | null = null;
+  function celebrateKonami() {
+    fireConfetti();
+    konamiFound = true;
+    if (konamiTimer) clearTimeout(konamiTimer);
+    konamiTimer = setTimeout(() => (konamiFound = false), 12000);
+  }
+  function claimKonami() {
+    konamiFound = false;
+    if (konamiTimer) clearTimeout(konamiTimer);
+    message =
+      "KONAMI cheat code accepted — claiming priority scheduling. Here's what I need:\n\n";
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    // Focus the message box once the scroll lands.
+    setTimeout(() => document.getElementById("cf-message")?.focus(), 700);
+  }
+  const navLinks = ["About", "Skills", "Projects", "Live Sites", "Blog", "Contact"];
+  const latestPosts = $derived(blogPosts.slice(0, 3));
+  const navHref = (link: string) =>
+    link === "Blog" ? "/blog" : `#${link.toLowerCase().replaceAll(" ", "-")}`;
   let name = $state(""),
     email = $state(""),
     subject = $state(""),
@@ -369,6 +489,13 @@
   function closeMenu() {
     menuOpen = false;
   }
+  function applyContactIntent() {
+    if (!window.location.hash.startsWith("#contact")) return;
+    const intent = takeContactIntent();
+    if (!intent) return;
+    subject = intent.subject;
+    message = intent.message;
+  }
   onMount(() => {
     const saved = localStorage.getItem("theme") as "dark" | "light" | null;
     const prefersLight = window.matchMedia(
@@ -379,7 +506,26 @@
     const onScroll = () => (scrolled = window.scrollY > 16);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    hosted.forEach((h) => checkSite(h.url));
+    const uptimeTimer = setInterval(
+      () => hosted.forEach((h) => checkSite(h.url)),
+      60000,
+    );
+    console.log(
+      "%cLooking for a dev who reads consoles? %cjedboyjabagat@gmail.com",
+      "font-weight:bold;color:#e60000;font-size:14px;",
+      "font-size:12px;",
+    );
+    const stopKonami = watchKonami(celebrateKonami);
+    applyContactIntent();
+    window.addEventListener("hashchange", applyContactIntent);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("hashchange", applyContactIntent);
+      clearInterval(uptimeTimer);
+      stopKonami();
+      if (konamiTimer) clearTimeout(konamiTimer);
+    };
   });
   function toggleTheme() {
     theme = theme === "dark" ? "light" : "dark";
@@ -392,7 +538,7 @@
   <title>Jade Angco — Front-End Developer • SvelteKit & Vue</title>
   <meta
     name="description"
-    content="Male Front-End Developer specializing in SvelteKit, Vue.js, and Nuxt. Building responsive, visually polished web interfaces with modern technologies."
+    content="Jade Angco — Front-End Developer specializing in SvelteKit, Vue.js, and Nuxt. Building fast, responsive, visually polished web interfaces. Based in Bislig City, Surigao del Sur, Philippines — available for remote freelance worldwide."
   />
   <meta
     name="keywords"
@@ -407,17 +553,31 @@
 			"gender": "Male",
 			"url": "https://jadeangco-portfolio.onrender.com",
 			"image": "https://jadeangco-portfolio.onrender.com/Jade.jpg",
-			"jobTitle": "Front-End Developer",
-			"worksFor": {
-				"@type": "Organization",
-				"name": "Freelance"
-			},
+			"jobTitle": ["Programmer", "Front-End Developer"],
+			"worksFor": [
+				{
+					"@type": "GovernmentOrganization",
+					"name": "Local Government Unit",
+					"address": {
+						"@type": "PostalAddress",
+						"addressLocality": "Bislig City",
+						"addressRegion": "Surigao del Sur",
+						"addressCountry": "PH"
+					}
+				},
+				{
+					"@type": "Organization",
+					"name": "Freelance (part-time)"
+				}
+			],
 			"description": "Male Front-End Developer specializing in SvelteKit, Vue.js, and modern web technologies. Building fast, responsive interfaces with clean code.",
 			"address": {
 				"@type": "PostalAddress",
+				"streetAddress": "Purok 4 Dela Silva Street, Poblacion",
 				"addressLocality": "Bislig City",
 				"addressRegion": "Surigao del Sur",
-				"addressCountry": "Philippines"
+				"postalCode": "8311",
+				"addressCountry": "PH"
 			},
 			"email": "jedboyjabagat@gmail.com",
 			"alumniOf": {
@@ -447,11 +607,103 @@
 		}
 		</script>
 	`}
+  {@html `
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "WebSite",
+			"name": "Jade Angco Portfolio",
+			"url": "https://jadeangco-portfolio.onrender.com/",
+			"inLanguage": "en",
+			"author": {
+				"@type": "Person",
+				"name": "Jade Jabagat Angco"
+			}
+		}
+		</script>
+	`}
+  {@html `
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@graph": [
+				{
+					"@type": "FAQPage",
+					"mainEntity": [
+						{
+							"@type": "Question",
+							"name": "What services do you offer?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "Front-end development with SvelteKit, Vue.js, and Nuxt — from Figma to production — plus website hosting and DevOps: Nginx, Cloudflare Tunnel, DNS, SSL, and live uptime monitoring."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "Where are you based, and do you work remotely?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "I'm based in Poblacion, Bislig City, Surigao del Sur, Philippines, and I work with clients remotely worldwide. I typically reply within 24 hours."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "What technologies do you work with?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "SvelteKit, Vue.js and Nuxt, TailwindCSS and DaisyUI, TypeScript, Firebase, MySQL and MongoDB, with back ends in CodeIgniter and Hono — deployed on Vercel, Render, and Cloudflare-backed servers."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "Can you take over or fix my existing website?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "Yes. I currently host and maintain five live client websites — handling DNS, SSL, Nginx, and Cloudflare Tunnel — so migrations, fixes, and ongoing maintenance are part of the job."
+							}
+						},
+						{
+							"@type": "Question",
+							"name": "How do we start working together?",
+							"acceptedAnswer": {
+								"@type": "Answer",
+								"text": "Send a message through the contact form or email describing your project. We'll have a short discovery chat, agree on scope, and I'll give you a clear plan and timeline before any work starts."
+							}
+						}
+					]
+				},
+				{
+					"@type": "ProfessionalService",
+					"name": "Jade Angco — Front-End Development & Hosting",
+					"url": "https://jadeangco-portfolio.onrender.com/",
+					"image": "https://jadeangco-portfolio.onrender.com/og-image.png",
+					"hasMap": "https://maps.app.goo.gl/ad7XWCvsLRW9vebHA",
+					"address": {
+						"@type": "PostalAddress",
+						"streetAddress": "Purok 4 Dela Silva Street, Poblacion",
+						"addressLocality": "Bislig City",
+						"addressRegion": "Surigao del Sur",
+						"postalCode": "8311",
+						"addressCountry": "PH"
+					},
+					"areaServed": ["Bislig City, Philippines", "Worldwide (remote)"],
+					"sameAs": [
+						"https://github.com/justjedjed",
+						"https://www.facebook.com/just.jeddd"
+					]
+				}
+			]
+		}
+		</script>
+	`}
 </svelte:head>
 
 <svelte:window
   onkeydown={(e) => {
-    if (e.key === "Escape") menuOpen = false;
+    if (e.key === "Escape") {
+      menuOpen = false;
+      closeProject();
+    }
   }}
 />
 
@@ -461,7 +713,6 @@
 <header class="mast" class:scrolled>
   <div class="section-inner mast-inner">
     <a href="#main" class="brand">
-      <span class="brand-mark" aria-hidden="true">JA</span>
       <span class="brand-text">
         <strong>Jade Angco</strong>
         <span>Front-End Developer</span>
@@ -471,7 +722,7 @@
       <ul class="mast-nav">
         {#each navLinks as link}
           <li>
-            <a href={`#${link.toLowerCase().replaceAll(" ", "-")}`}>
+            <a href={navHref(link)}>
               {link}
             </a>
           </li>
@@ -518,10 +769,7 @@
         <ul>
           {#each navLinks as link}
             <li>
-              <a
-                href={`#${link.toLowerCase().replaceAll(" ", "-")}`}
-                onclick={closeMenu}
-              >
+              <a href={navHref(link)} onclick={closeMenu}>
                 {link}
               </a>
             </li>
@@ -537,14 +785,15 @@
   <section class="section hero">
     <div class="section-inner hero-grid">
       <div class="hero-copy">
-        <p class="status-row">
+        <p class="status-row" title="Purok 4 Dela Silva Street, Poblacion, Bislig City, Surigao del Sur 8311, Philippines">
           <span class="pulse" aria-hidden="true"></span>
-          <span>Available for work</span>
+          <span>Available part-time</span>
           <span class="status-sep" aria-hidden="true">/</span>
-          <span>Bislig City, PH — Remote worldwide</span>
+          <span>Poblacion, Bislig City, PH — Remote worldwide</span>
         </p>
         <h1 class="hero-title">
-          Interfaces<br />with intent<span class="dot">.</span>
+          <span class="sr-only">Jade Angco — Front-End Developer: </span
+          >Interfaces<br />with intent<span class="dot">.</span>
         </h1>
         <p class="lede">
           I’m Jade Angco. I build <strong>fast</strong>,
@@ -592,13 +841,6 @@
             aria-label="Email"
             title="Email">Email</a
           >
-          <a
-            href="https://reziofy.web.app/jadeangco?type=resume"
-            class="soc"
-            aria-label="Resume"
-            title="Resume"
-            onclick={trackResume}>Resume</a
-          >
         </div>
       </div>
       <figure class="portrait">
@@ -607,6 +849,7 @@
             src="/Jade.jpg"
             alt="Portrait of Jade Angco"
             fetchpriority="high"
+            decoding="async"
           />
         </div>
         <figcaption class="portrait-cap">
@@ -614,7 +857,7 @@
             ><strong>Jade Jabagat Angco</strong> — BS Computer Science, NEMSU Tagbina</span
           >
           <span class="chip live"
-            ><span class="chip-dot" aria-hidden="true"></span>Open</span
+            ><span class="chip-dot" aria-hidden="true"></span>Part-time</span
           >
         </figcaption>
       </figure>
@@ -681,6 +924,16 @@
               roots in both hardware & software.
             </span>
           </p>
+          <p class="cert work">
+            <span aria-hidden="true"
+              ><Briefcase size={18} strokeWidth={2.25} /></span
+            >
+            <span>
+              Currently a <strong>Programmer</strong> at a Local Government
+              Unit <em>(Contract of Service)</em> — building public-sector
+              systems by day, client work by night.
+            </span>
+          </p>
           <div class="tag-cloud">
             {#each aboutTags as t}<span class="tag">{t}</span>{/each}
           </div>
@@ -703,6 +956,73 @@
           {/each}
         </ol>
       </div>
+    </div>
+  </section>
+
+  <!-- JOURNEY -->
+  <section class="section rule" id="journey">
+    <div class="section-inner">
+      <div class="sec-top">
+        <div>
+          <h2 class="sec-title">The road so far<span class="dot">.</span></h2>
+        </div>
+        <p class="sec-sub">Milestones, in order — no padding.</p>
+      </div>
+      <ol class="journey-list">
+        <li>
+          <span class="j-num">01</span>
+          <div>
+            <h3>BS Computer Science</h3>
+            <p>
+              North Eastern Mindanao State University, Tagbina — code,
+              systems, and how computers actually work.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="j-num">02</span>
+          <div>
+            <h3>NCII Certified</h3>
+            <p>
+              Computer Systems Servicing — hardware roots and an IT-support
+              background behind the frontend work.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="j-num">03</span>
+          <div>
+            <h3>5 client sites live</h3>
+            <p>
+              Hosting and maintaining MM Group websites on Nginx +
+              Cloudflare Tunnel — <a href="/work/mm-group-hosting"
+                >read the case study →</a
+              >
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="j-num">04</span>
+          <div>
+            <h3>Open for work</h3>
+            <p>
+              Freelance front-end and hosting, remote worldwide. <a
+                href="#contact">Start a project →</a
+              >
+            </p>
+          </div>
+        </li>
+      </ol>
+      {#if testimonials.length > 0}
+        <div class="quotes">
+          {#each testimonials as t}
+            <figure class="quote-card">
+              <blockquote>“{t.quote}”</blockquote>
+              <figcaption><strong>{t.name}</strong> — {t.role}</figcaption>
+            </figure>
+          {/each}
+        </div>
+      {/if}
     </div>
   </section>
 
@@ -730,24 +1050,56 @@
               <span class="chip">{g.items.length} skills</span>
             </div>
             <ul>
-              {#each g.items as it}
-                <li>
-                  <div class="meter-row">
-                    <span class="meter-name">{it.name}</span>
-                    <span class="meter-level">{it.level}</span>
-                  </div>
-                  <div
-                    class="meter"
-                    role="img"
-                    aria-label={`${it.name}: ${it.pct} percent`}
-                  >
-                    <div class="meter-fill" style={`width:${it.pct}%`}></div>
-                  </div>
+              {#each g.items as it, j}
+                <li
+                  class="meter-row"
+                  class:meter-first={j === 0}
+                  class:meter-last={j === g.items.length - 1}
+                >
+                  <span class="meter-name">{it.name}</span>
+                  <span class="meter-level">{it.level}</span>
                 </li>
               {/each}
             </ul>
           </div>
         {/each}
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section class="section rule" id="writing">
+    <div class="section-inner">
+      <div class="sec-top">
+        <div>
+          <h2 class="sec-title">Latest writing<span class="dot">.</span></h2>
+        </div>
+        <p class="sec-sub">
+          Practical notes from real builds — hosting, SvelteKit, and
+          freelancing.
+        </p>
+      </div>
+      <div class="writing-grid">
+        {#each latestPosts as p}
+          <article class="writing-card">
+            <p class="writing-meta">
+              <time datetime={p.date}>{p.date}</time>
+              <span aria-hidden="true">·</span>
+              <span>{p.readingMins} min read</span>
+            </p>
+            <h3><a href={`/blog/${p.slug}`}>{p.title}</a></h3>
+            <p class="writing-excerpt">{p.excerpt}</p>
+            <a class="text-link" href={`/blog/${p.slug}`}>
+              Read post
+              <span aria-hidden="true"
+                ><ArrowUpRight size={14} strokeWidth={2.5} /></span
+              >
+            </a>
+          </article>
+        {/each}
+      </div>
+      <div class="writing-more">
+        <a class="btn btn-ghost btn-sm" href="/blog">View all posts →</a>
       </div>
     </div>
   </section>
@@ -774,72 +1126,172 @@
       <div class="work-list">
         {#each filteredProjects as p, i}
           <article class="work-row">
-            {#if p.url}
-              <a
-                class="work-media"
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Open ${p.title}`}
+            <div
+              class="work-media"
+              role="button"
+              tabindex="0"
+              aria-label={`View details for ${p.title}`}
+              onclick={() => openProject(p)}
+              onkeydown={(e) => {
+                if (e.key === "Enter" || e.key === " ") openProject(p);
+              }}
+            >
+              <img
+                src={shotSrc(p)}
+                alt={`${p.title} — ${p.kind} live preview`}
+                loading="lazy" decoding="async"
+                onerror={(e) => shotFallback(e, p)}
+              />
+              <span
+                class="chip"
+                class:live={p.status === "Completed"}
+                class:dev={p.status !== "Completed"}
               >
-                <img src={p.image} alt={p.title} loading="lazy" />
-                <span
-                  class="chip"
-                  class:live={p.status === "Completed"}
-                  class:dev={p.status !== "Completed"}
-                >
-                  {p.status}
-                </span>
-                <span class="work-open" aria-hidden="true"
-                  ><ArrowUpRight size={17} strokeWidth={2.5} /></span
-                >
-              </a>
-            {:else}
-              <div class="work-media">
-                <img src={p.image} alt={p.title} loading="lazy" />
-                <span
-                  class="chip"
-                  class:live={p.status === "Completed"}
-                  class:dev={p.status !== "Completed"}
-                >
-                  {p.status}
-                </span>
-              </div>
-            {/if}
+                {p.status}
+              </span>
+              <span class="work-open" aria-hidden="true"
+                ><ArrowUpRight size={17} strokeWidth={2.5} /></span
+              >
+            </div>
             <div class="work-body">
               <p class="work-meta">
                 <span class="work-index">{String(i + 1).padStart(2, "0")}</span>
-                <span class="work-kind">{p.kind}</span>
+                <span class="work-kind">{p.kind} · {p.year}</span>
               </p>
               <h3>{p.title}</h3>
               <p class="work-desc">{p.desc}</p>
               <div class="tag-row">
                 {#each p.tags as t}<span class="tag">{t}</span>{/each}
               </div>
-              {#if p.url}
-                <a
-                  class="text-link"
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <div class="work-links">
+                <button
+                  type="button"
+                  class="text-link as-button"
+                  onclick={() => openProject(p)}
                 >
-                  Visit site
-                  <span aria-hidden="true"
-                    ><ArrowUpRight size={14} strokeWidth={2.5} /></span
-                  >
-                </a>
-              {:else}
-                <a class="text-link" href="#contact">
-                  Case study on request
+                  View details
                   <span aria-hidden="true"
                     ><ArrowRight size={14} strokeWidth={2.5} /></span
                   >
-                </a>
-              {/if}
+                </button>
+                {#if p.url}
+                  <a
+                    class="text-link"
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onclick={(e) => e.stopPropagation()}
+                  >
+                    Visit site
+                    <span aria-hidden="true"
+                      ><ArrowUpRight size={14} strokeWidth={2.5} /></span
+                    >
+                  </a>
+                {:else}
+                  <a
+                    class="text-link muted"
+                    href="#contact"
+                    title="Ask for a walkthrough or source access"
+                  >
+                    Request demo
+                    <span aria-hidden="true"
+                      ><ArrowRight size={14} strokeWidth={2.5} /></span
+                    >
+                  </a>
+                {/if}
+              </div>
             </div>
           </article>
         {/each}
       </div>
+      {#if selectedProject}
+        {@const sp = selectedProject}
+        <div
+          class="modal-backdrop"
+          role="presentation"
+          onclick={closeProject}
+          onkeydown={(e) => {
+            if (e.key === "Escape" || e.key === "Enter") closeProject();
+          }}
+        >
+          <div
+            class="modal-card"
+            role="dialog"
+            tabindex="-1"
+            aria-modal="true"
+            aria-label={`${selectedProject.title} details`}
+            onclick={(e) => e.stopPropagation()}
+            onkeydown={(e) => e.stopPropagation()}
+          >
+            <div class="modal-media">
+              <img
+                src={shotSrc(sp)}
+                alt={`${sp.title} — ${sp.kind} live preview`}
+                decoding="async"
+                onerror={(e) => shotFallback(e, sp)}
+              />
+              <button
+                type="button"
+                class="modal-close"
+                onclick={closeProject}
+                aria-label="Close details"
+              >
+                <span aria-hidden="true"
+                  ><X size={16} strokeWidth={2.5} /></span
+                >
+              </button>
+              <span
+                class="chip modal-status"
+                class:live={selectedProject.status === "Completed"}
+                class:dev={selectedProject.status !== "Completed"}
+              >
+                {selectedProject.status}
+              </span>
+            </div>
+            <div class="modal-body">
+              <p class="work-meta">
+                <span class="work-kind"
+                  >{selectedProject.kind} · {selectedProject.year} · {selectedProject.role}</span
+                >
+              </p>
+              <h3>{selectedProject.title}</h3>
+              <p class="work-desc">{selectedProject.desc}</p>
+              <h4 class="modal-sub">Key highlights</h4>
+              <ul class="modal-list">
+                {#each selectedProject.highlights as hl}<li>{hl}</li>{/each}
+              </ul>
+              <div class="tag-row">
+                {#each selectedProject.tags as t}<span class="tag">{t}</span>{/each}
+              </div>
+              <div class="modal-cta">
+                {#if selectedProject.url}
+                  <a
+                    class="btn btn-primary btn-sm"
+                    href={selectedProject.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visit live site
+                    <span class="btn-icon" aria-hidden="true"
+                      ><ArrowUpRight size={14} strokeWidth={2.5} /></span
+                    >
+                  </a>
+                {:else}
+                  <span class="modal-note"
+                    >Demo available on request — source walkthrough via
+                    call.</span
+                  >
+                {/if}
+                <a
+                  class="btn btn-ghost btn-sm"
+                  href="#contact"
+                  onclick={closeProject}>Ask about this</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      {/if}
     </div>
   </section>
 
@@ -853,19 +1305,49 @@
         <p class="sec-sub">
           Real-world sites designed, developed & deployed for clients — live,
           fast & maintained.
+          <a class="sec-link" href="/work/mm-group-hosting"
+            >Read the hosting case study →</a
+          >
         </p>
       </div>
       <ul class="site-list">
         {#each hosted as h, i}
           <li class="site-row">
             <span class="site-num">{String(i + 1).padStart(2, "0")}</span>
-            <img class="site-thumb" src={h.image} alt={h.title} loading="lazy" />
+            <img
+              class="site-thumb"
+              src={h.image}
+              alt={`${h.title} — live client website preview`}
+              loading="lazy" decoding="async"
+            />
             <div class="site-body">
               <div class="site-head">
                 <h3>{h.title}</h3>
-                <span class="chip live">{h.status}</span>
+                {#if liveStatus[h.url] === "offline"}
+                  <span
+                    class="chip offline"
+                    title="Not responding — checked just now in your browser"
+                    >○ Offline</span
+                  >
+                {:else if liveStatus[h.url] === "online"}
+                  <span
+                    class="chip live"
+                    title={liveLatency[h.url]
+                      ? `Responding in ${liveLatency[h.url]}ms — re-checked every 60s in your browser`
+                      : "Responding now — checked in your browser"}
+                    >● Live{liveLatency[h.url]
+                      ? ` · ${liveLatency[h.url]}ms`
+                      : ""}</span
+                  >
+                {:else}
+                  <span class="chip checking" title="Checking live reachability…"
+                    >○ Checking…</span
+                  >
+                {/if}
               </div>
-              <p class="site-role">{h.role}</p>
+              <p class="site-role">
+                {h.role} · Nginx + Cloudflare Tunnel
+              </p>
               <p class="site-desc">{h.desc}</p>
               <div class="tag-row">
                 {#each h.tags as t}<span class="tag">{t}</span>{/each}
@@ -888,6 +1370,66 @@
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section class="section rule" id="faq">
+    <div class="section-inner">
+      <div class="sec-top">
+        <div>
+          <h2 class="sec-title">Questions, answered<span class="dot">.</span></h2>
+        </div>
+        <p class="sec-sub">
+          Hiring a front-end developer or need hosting help? Start here.
+        </p>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>What services do you offer?</summary>
+          <p>
+            Front-end development with SvelteKit, Vue.js, and Nuxt — from
+            Figma to production — plus website hosting and DevOps: Nginx,
+            Cloudflare Tunnel, DNS, SSL, and live uptime monitoring.
+          </p>
+        </details>
+        <details>
+          <summary>Where are you based, and do you work remotely?</summary>
+          <p>
+            I’m based in Poblacion, Bislig City, Surigao del Sur,
+            Philippines, and I work with clients remotely worldwide. I
+            typically reply within 24 hours.
+          </p>
+        </details>
+        <details>
+          <summary>What technologies do you work with?</summary>
+          <p>
+            SvelteKit, Vue.js and Nuxt, TailwindCSS and DaisyUI, TypeScript,
+            Firebase, MySQL and MongoDB, with back ends in CodeIgniter and
+            Hono — deployed on Vercel, Render, and Cloudflare-backed servers.
+          </p>
+        </details>
+        <details>
+          <summary>Can you take over or fix my existing website?</summary>
+          <p>
+            Yes. I currently host and maintain five live client websites —
+            handling DNS, SSL, Nginx, and Cloudflare Tunnel — so migrations,
+            fixes, and ongoing maintenance are part of the job.
+          </p>
+        </details>
+        <details>
+          <summary>How do we start working together?</summary>
+          <p>
+            Send a message through the contact form or email describing your
+            project. We’ll have a short discovery chat, agree on scope, and
+            I’ll give you a clear plan and timeline before any work starts.
+          </p>
+        </details>
+      </div>
+      <p class="faq-more">
+        Still deciding? <a href="#contact">Describe your project →</a> — I
+        reply within 24 hours.
+      </p>
+    </div>
+  </section>
+
   <!-- CONTACT -->
   <section class="section rule" id="contact">
     <div class="section-inner">
@@ -902,6 +1444,36 @@
           open.
         </p>
       </div>
+      <ol class="process-list">
+        <li>
+          <span class="p-step">01</span>
+          <div>
+            <strong>Discover</strong>
+            <p>A short chat about your goals and must-haves.</p>
+          </div>
+        </li>
+        <li>
+          <span class="p-step">02</span>
+          <div>
+            <strong>Scope & plan</strong>
+            <p>Clear scope, timeline, and price — no surprises.</p>
+          </div>
+        </li>
+        <li>
+          <span class="p-step">03</span>
+          <div>
+            <strong>Build</strong>
+            <p>Preview links as it comes together, not promises.</p>
+          </div>
+        </li>
+        <li>
+          <span class="p-step">04</span>
+          <div>
+            <strong>Launch & care</strong>
+            <p>Deployed, monitored, handed over with notes.</p>
+          </div>
+        </li>
+      </ol>
       <div class="contact-grid">
         <aside class="contact-aside">
           <p class="aside-note">
@@ -956,7 +1528,16 @@
           </a>
           <div class="channel static">
             <span class="channel-label">Location</span>
-            <strong>Bislig City, Surigao del Sur, Philippines</strong>
+            <strong
+              >Purok 4 Dela Silva St., Poblacion, Bislig City, Surigao del
+              Sur 8311, Philippines</strong
+            >
+            <a
+              class="map-link"
+              href="https://maps.app.goo.gl/ad7XWCvsLRW9vebHA"
+              target="_blank"
+              rel="noopener">View on map ↗</a
+            >
           </div>
         </aside>
         <form class="contact-form" onsubmit={handleSubmit}>
@@ -992,7 +1573,15 @@
               bind:value={subject}
               placeholder="Project inquiry, collaboration..."
               autocomplete="off"
-            /></label
+              list="subject-suggestions"
+            /><datalist id="subject-suggestions">
+              <option value="Project inquiry — new website"></option>
+              <option value="Hosting setup inquiry"></option>
+              <option value="Fix my website"></option>
+              <option value="Take over my existing site"></option>
+              <option value="Collaboration"></option>
+              <option value="Just saying hi"></option>
+            </datalist></label
           >
           <label for="cf-message"
             ><span>Message *</span><textarea
@@ -1044,16 +1633,45 @@
     <p class="foot-big">Available worldwide<span class="dot">.</span></p>
     <div class="foot-row">
       <span class="foot-brand">&lt;JA/&gt; <span>2026</span></span>
+      <a href="/blog" class="foot-blog">Blog ↗</a>
       <span class="foot-mid"
-        >Crafted in Bislig · <span class="avail">● Available for new work</span
+        >Crafted in Poblacion, Bislig City · <span class="avail">● Available part-time</span
         ></span
       >
       <span class="foot-legal"
-        >© 2026 Jade Jabagat Angco — Designed & built in Bislig City, PH</span
+        >© 2026 Jade Jabagat Angco — Designed & built in Poblacion, Bislig City, PH</span
       >
+      <span class="konami-hint" title="Psst… try the Konami code">↑↑↓↓←→←→BA</span>
     </div>
   </div>
 </footer>
+
+{#if konamiFound}
+  <div class="konami-wrap" role="presentation">
+    <div class="konami-card" role="status">
+      <button
+        type="button"
+        class="konami-close"
+        onclick={() => (konamiFound = false)}
+        aria-label="Dismiss">✕</button
+      >
+      <span class="konami-icon" aria-hidden="true"
+        ><Gamepad2 size={26} strokeWidth={2} /></span
+      >
+      <p class="konami-kicker">↑↑↓↓←→←→BA accepted</p>
+      <p class="konami-title">You cheat-code like a dev.</p>
+      <p class="konami-sub">
+        Hit <strong>claim</strong> and your message box fills itself with the
+        secret password — instant queue-jump on your project.
+      </p>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm btn-block"
+        onclick={claimKonami}>Claim priority →</button
+      >
+    </div>
+  </div>
+{/if}
 
 <style>
   .topline {
@@ -1089,20 +1707,6 @@
     display: flex;
     align-items: center;
     gap: 0.65rem;
-  }
-  .brand-mark {
-    width: 38px;
-    height: 38px;
-    background: var(--primary);
-    color: var(--on-primary);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.04em;
-    border-radius: 8px;
   }
   .brand-text {
     display: flex;
@@ -1591,13 +2195,21 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
   }
   .meter-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.45rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .meter-first {
+    padding-top: 0;
+  }
+  .meter-last {
+    border-bottom: none;
+    padding-bottom: 0;
   }
   .meter-name {
     font-size: 0.9rem;
@@ -1609,18 +2221,10 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--primary);
-  }
-  .meter {
-    height: 6px;
+    border: 1px solid var(--border-strong);
     border-radius: 999px;
-    background: var(--surface-raised);
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-  .meter-fill {
-    height: 100%;
-    background: var(--primary);
-    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    white-space: nowrap;
   }
 
   .filters {
@@ -1760,6 +2364,246 @@
     flex-wrap: wrap;
     margin-top: 0.85rem;
   }
+  .writing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .writing-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    transition:
+      transform 0.2s var(--ease-smooth),
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .writing-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-soft);
+  }
+  .writing-card:hover h3 a {
+    color: var(--primary);
+  }
+  .writing-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .writing-card h3 {
+    font-size: 1.02rem;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+  }
+  .writing-excerpt {
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+  .writing-card .text-link {
+    margin-top: 0.4rem;
+    align-self: flex-start;
+  }
+  .writing-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .journey-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+  .journey-list li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .j-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--primary);
+  }
+  .journey-list h3 {
+    font-size: 0.98rem;
+    margin-bottom: 0.35rem;
+  }
+  .journey-list p {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .journey-list p a {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .journey-list p a:hover {
+    text-decoration: underline;
+  }
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+  .quote-card {
+    margin: 0;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius-md);
+    padding: 1.1rem 1.2rem;
+  }
+  .quote-card blockquote {
+    margin: 0 0 0.6rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .quote-card figcaption {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 980px) {
+    .journey-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .quotes {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .journey-list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .konami-hint {
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    opacity: 0.45;
+    cursor: help;
+    user-select: none;
+  }
+  .konami-hint:hover {
+    opacity: 1;
+    color: var(--primary);
+  }
+  .konami-wrap {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 120;
+    display: flex;
+    justify-content: center;
+    padding: 0 1rem 1.5rem;
+    pointer-events: none;
+  }
+  .konami-card {
+    position: relative;
+    pointer-events: auto;
+    width: min(400px, 100%);
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-top: 4px solid var(--primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-heavy);
+    padding: 1.5rem 1.5rem 1.4rem;
+    animation: konami-in 0.35s var(--ease-spring);
+  }
+  @keyframes konami-in {
+    from {
+      transform: translateY(20px) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+  .konami-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--ink-faint);
+    font-size: 0.65rem;
+  }
+  .konami-close:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .konami-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--green-tint);
+    border: 1px solid rgba(230, 0, 0, 0.35);
+    color: var(--primary);
+    margin-bottom: 0.6rem;
+  }
+  .konami-kicker {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .konami-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 0.35rem;
+  }
+  .konami-sub {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0.5rem 0 1rem;
+  }
+  .konami-sub strong {
+    color: var(--ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .konami-card {
+      animation: none;
+    }
+  }
+
   .text-link {
     display: inline-flex;
     align-items: center;
@@ -1776,6 +2620,158 @@
   .text-link:hover {
     color: var(--ink);
     border-color: var(--ink);
+  }
+  .work-media {
+    cursor: pointer;
+  }
+  .work-media:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+  }
+  .work-links {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+  .text-link.as-button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid var(--primary);
+    border-radius: 0;
+    padding: 0 0 0.15rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .text-link.muted {
+    color: var(--ink-faint);
+    border-color: var(--border-strong);
+  }
+  .chip.checking {
+    background: var(--surface-raised);
+    color: var(--ink-soft);
+    border: 1px solid var(--border-strong);
+  }
+  .chip.offline {
+    background: #3a3a3a;
+    color: #ffd7d7;
+    border: 1px solid #6b4444;
+  }
+  .map-link {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--on-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    margin-top: 0.35rem;
+    display: inline-block;
+  }
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-card {
+    width: min(580px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-heavy);
+    color: var(--ink);
+  }
+  .modal-media {
+    position: relative;
+    height: 230px;
+    overflow: hidden;
+    background: var(--surface-raised);
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .modal-status {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.7rem;
+  }
+  .modal-close {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.62);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .modal-close:hover {
+    background: rgba(0, 0, 0, 0.85);
+  }
+  .modal-body {
+    padding: 1.25rem 1.35rem 1.4rem;
+  }
+  .modal-body h3 {
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    margin-top: 0.35rem;
+  }
+  .modal-sub {
+    margin: 0.9rem 0 0.4rem;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .modal-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.87rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .modal-cta {
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 1.1rem;
+  }
+  .modal-note {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    flex: 1;
+    min-width: 200px;
+  }
+  @media (hover: none), (pointer: coarse) {
+    .work-open {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .site-list {
@@ -1853,6 +2849,93 @@
     background: var(--primary);
     border-color: var(--primary);
     color: var(--on-primary);
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--border-strong);
+  }
+  .faq-list details {
+    border-bottom: 1px solid var(--border);
+    padding: 1.05rem 0.25rem;
+  }
+  .faq-list summary {
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    list-style-position: inside;
+  }
+  .faq-list summary::marker {
+    color: var(--primary);
+  }
+  .faq-list summary:hover {
+    color: var(--primary);
+  }
+  .faq-list details p {
+    margin: 0.6rem 0 0.15rem;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    font-size: 0.9rem;
+    max-width: 640px;
+  }
+  .faq-more {
+    margin-top: 1.4rem;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+  .faq-more a {
+    font-weight: 800;
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.1rem;
+  }
+  .faq-more a:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .process-list {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+  }
+  .process-list li {
+    display: flex;
+    gap: 0.7rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.9rem 1rem;
+  }
+  .p-step {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  .process-list strong {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+  }
+  .process-list p {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  @media (max-width: 980px) {
+    .process-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .process-list {
+      grid-template-columns: 1fr;
+    }
   }
 
   .contact-grid {
@@ -2016,6 +3099,13 @@
     color: var(--ink);
     font-weight: 800;
   }
+  .foot-blog {
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .foot-blog:hover {
+    color: var(--primary);
+  }
   .foot-brand span {
     color: var(--ink-faint);
     font-weight: 600;
@@ -2050,6 +3140,9 @@
     .work-row {
       grid-template-columns: 1fr;
       gap: 1.1rem;
+    }
+    .writing-grid {
+      grid-template-columns: 1fr;
     }
     .site-row {
       grid-template-columns: auto 1fr auto;
